@@ -5,6 +5,9 @@ class Vector3:
         self.y = y
         self.z = z
 
+    def value(self):
+        return [[self.x],[self.y],[self.z]]
+
 
 def createVector(x,y,z):
     return Vector3(x,y,z)
