@@ -1,8 +1,13 @@
+# Find numbers equal to the sum of own digits raised to the nth power
+# in which n is incremented for each new digit (left to right)
 
-
-for i in range(1000, 1000000):
-	first_half = i // 1000
-	second_half = i - first_half*1000
-
-	if i == (first_half * second_half):
-		print(i)
+for number in range(10, 1000000):
+	number_digits = list(map(int, str(number)))
+	result = 0
+	i = 1
+	for digit in number_digits:
+		result += digit ** i
+		i += 1
+	if number == result:
+		print(number)
+	# print('[findperfectdigitsum] None -' + ' number - ' + str(number) + ' result - ' + str(result))
