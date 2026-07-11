@@ -1,5 +1,39 @@
 
-def numble(total_numbers=3, operators=['+', '-', '*', '/']):
+import operator
+
+
+SUPPORTED_OPERATORS = {
+    '+': operator.add,
+    '-': operator.sub,
+    '*': operator.mul,
+    '/': operator.truediv,
+}
+
+
+def apply_operator(left_value, selected_operator, right_value):
+    if selected_operator not in SUPPORTED_OPERATORS:
+        raise ValueError(f'Unsupported operator: {selected_operator}')
+
+    return int(SUPPORTED_OPERATORS[selected_operator](left_value, right_value))
+
+
+def evaluate_expression_parts(expression_parts):
+    if not expression_parts:
+        raise ValueError('Expression must contain at least one number.')
+
+    if len(expression_parts) % 2 == 0:
+        raise ValueError('Expression must alternate numbers and operators.')
+
+    current_value = expression_parts[0]
+    for i in range(1, len(expression_parts), 2):
+        selected_operator = expression_parts[i]
+        next_number = expression_parts[i + 1]
+        current_value = apply_operator(current_value, selected_operator, next_number)
+
+    return current_value
+
+
+def numble(total_numbers=3, operators=None):
     """
     This function generates a math game where the user has to guess the numbers and operators that were used to generate a random number.
 
@@ -8,6 +42,11 @@ def numble(total_numbers=3, operators=['+', '-', '*', '/']):
         operators (list): The list of operators to be used in the game.
     """
     import random
+
+    if operators is None:
+        operators = list(SUPPORTED_OPERATORS)
+    else:
+        operators = list(operators)
 
     all_numbers = list(range(1, 10))
     selected_number = random.choice(all_numbers)
@@ -21,8 +60,7 @@ def numble(total_numbers=3, operators=['+', '-', '*', '/']):
         operator = random.choice(operators)
         next_number = random.choice(all_numbers)
         all_numbers.remove(next_number)
-        current_value = eval(f'{current_value} {operator} {next_number}')
-        current_value = int(current_value)
+        current_value = apply_operator(current_value, operator, next_number)
         # print(f'{current_value} = {current_value} {operator} {next_number}')
         answer += [operator, next_number]
 
@@ -46,13 +84,7 @@ def numble(total_numbers=3, operators=['+', '-', '*', '/']):
             guess_answer.append(s)
 
     # Check if the guess is correct
-    guess_value = guess_answer[0]
-    # print(guess_answer)
-    for i in range(1, len(guess_answer), 2):
-        operator = guess_answer[i]
-        next_number = guess_answer[i+1]
-        guess_value = eval(f'{guess_value} {operator} {next_number}')
-        guess_value = int(guess_value)
+    guess_value = evaluate_expression_parts(guess_answer)
 
     if guess_value == current_value:
         print('Correct! You are a genius!')
