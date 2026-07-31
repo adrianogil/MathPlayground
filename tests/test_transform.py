@@ -140,6 +140,61 @@ class ScalingMatrixTest(unittest.TestCase):
             np.array([15, 14, 44, 1]),
         )
 
+    def test_unit_scaling_from_non_orthogonal_basis_is_identity(self):
+        non_orthogonal_basis = (
+            createVector(1, 0, 1),
+            createVector(0, 1, 1),
+            createVector(1, 2, 0),
+        )
+
+        np.testing.assert_allclose(
+            getScalingMatrixFrom(
+                createVector(1, 1, 1),
+                *non_orthogonal_basis,
+            ),
+            np.identity(4),
+            atol=1e-15,
+        )
+
+    def test_scaling_from_non_orthogonal_basis_scales_each_basis_vector(self):
+        scale_factors = (2, 3, 4)
+        non_orthogonal_basis = (
+            createVector(1, 0, 1),
+            createVector(0, 1, 1),
+            createVector(1, 2, 0),
+        )
+        matrix = getScalingMatrixFrom(
+            createVector(*scale_factors),
+            *non_orthogonal_basis,
+        )
+
+        for basis_vector, scale_factor in zip(
+            non_orthogonal_basis,
+            scale_factors,
+        ):
+            with self.subTest(scale_factor=scale_factor):
+                vector = np.array(
+                    [basis_vector.x, basis_vector.y, basis_vector.z, 0]
+                )
+                np.testing.assert_allclose(
+                    matrix @ vector,
+                    scale_factor * vector,
+                    atol=1e-15,
+                )
+
+    def test_scaling_from_rejects_linearly_dependent_basis(self):
+        linearly_dependent_basis = (
+            createVector(1, 0, 0),
+            createVector(2, 0, 0),
+            createVector(0, 0, 1),
+        )
+
+        with self.assertRaisesRegex(ValueError, 'linearly independent'):
+            getScalingMatrixFrom(
+                createVector(2, 3, 4),
+                *linearly_dependent_basis,
+            )
+
     def test_scaling_rejects_values_without_vector_components(self):
         with self.assertRaises(AttributeError):
             getScalingMatrix([2, 3, 4])

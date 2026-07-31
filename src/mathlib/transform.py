@@ -45,10 +45,16 @@ def getScalingMatrix(s):
               )
 
 def getScalingMatrixFrom(s, v1, v2, v3):
+    """Return a scaling matrix expressed in a linearly independent basis."""
     F = np.array(
              [[v1.x, v2.x, v3.x, 0],
               [v1.y, v2.y, v3.y, 0],
               [v1.z, v2.z, v3.z, 0],
               [   0,    0,    0, 1]]
               )
-    return np.dot(np.dot(F,getScalingMatrix(s)),np.transpose(F))
+    try:
+        inverse_F = np.linalg.inv(F)
+    except np.linalg.LinAlgError as exception:
+        raise ValueError('Basis vectors must be linearly independent.') from exception
+
+    return np.dot(np.dot(F, getScalingMatrix(s)), inverse_F)
