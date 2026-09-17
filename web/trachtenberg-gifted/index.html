@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="An interactive walkthrough of the Trachtenberg multiplication used in Gifted.">
+  <title>The Trachtenberg Method from Gifted · MathPlayground</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main>
+    <header class="hero">
+      <p class="eyebrow">MathPlayground · Mental multiplication</p>
+      <h1>The multiplication method from <cite>Gifted</cite></h1>
+      <p class="lede">
+        Follow the outside and inside digit pairs that turn
+        <strong>135 × 57</strong> into <strong>7,695</strong>, one answer digit at a time.
+      </p>
+      <a class="scene-link" href="https://clip.cafe/gifted-2017/who-can-tell-what-four/" target="_blank" rel="noreferrer">
+        View the classroom scene transcript <span aria-hidden="true">↗</span>
+      </a>
+    </header>
+
+    <section class="control-bar" aria-labelledby="problem-heading">
+      <div>
+        <p class="section-label" id="problem-heading">Problem</p>
+        <div class="problem-fields">
+          <label>
+            Multiplicand
+            <input id="multiplicand" inputmode="numeric" type="number" min="1" max="99999" value="135">
+          </label>
+          <span class="operator" aria-hidden="true">×</span>
+          <label>
+            Two-digit multiplier
+            <input id="multiplier" inputmode="numeric" type="number" min="10" max="99" value="57">
+          </label>
+          <button id="loadProblem" type="button">Build steps</button>
+        </div>
+        <p id="problemError" class="error" role="alert" hidden></p>
+      </div>
+      <button id="loadGifted" class="quiet-button" type="button">Restore the movie problem</button>
+    </section>
+
+    <section class="playground" aria-labelledby="walkthrough-heading">
+      <div class="step-header">
+        <div>
+          <p class="section-label">Walkthrough</p>
+          <h2 id="walkthrough-heading">Build the answer from right to left</h2>
+        </div>
+        <p id="stepCount" class="step-count" aria-live="polite">Step 1 of 4</p>
+      </div>
+
+      <div class="progress-track" role="progressbar" aria-label="Walkthrough progress" aria-valuemin="1" aria-valuemax="4" aria-valuenow="1">
+        <span id="progressFill"></span>
+      </div>
+
+      <div class="number-board" aria-label="Current digit pairs and partial answer">
+        <div class="number-row">
+          <span class="row-label">Multiplicand</span>
+          <div id="digitRail" class="digit-rail"></div>
+        </div>
+        <div class="number-row multiplier-row">
+          <span class="row-label">Multiplier</span>
+          <div id="multiplierRail" class="digit-rail compact"></div>
+        </div>
+        <div class="number-row answer-row">
+          <span class="row-label">Answer</span>
+          <div id="answerRail" class="digit-rail compact" aria-live="polite"></div>
+        </div>
+      </div>
+
+      <div class="pair-work">
+        <div class="pair outside-pair">
+          <span class="pair-name"><span class="pair-dot" aria-hidden="true"></span>Outside pair</span>
+          <strong id="outsideExpression">5 × 7</strong>
+          <span id="outsideValue">35</span>
+        </div>
+        <span class="math-symbol" aria-hidden="true">+</span>
+        <div class="pair inside-pair">
+          <span class="pair-name"><span class="pair-dot" aria-hidden="true"></span>Inside pair</span>
+          <strong id="insideExpression">0 × 5</strong>
+          <span id="insideValue">0</span>
+        </div>
+        <span class="math-symbol" aria-hidden="true">+</span>
+        <div class="pair carry-pair">
+          <span class="pair-name">Incoming carry</span>
+          <strong id="carryExpression">0</strong>
+          <span aria-hidden="true">&nbsp;</span>
+        </div>
+        <span class="math-symbol" aria-hidden="true">=</span>
+        <div class="total">
+          <span class="pair-name">Local total</span>
+          <strong id="localTotal">35</strong>
+          <span id="writeInstruction">Write 5 · carry 3</span>
+        </div>
+      </div>
+
+      <p id="stepExplanation" class="step-explanation" aria-live="polite"></p>
+
+      <div class="transport" aria-label="Walkthrough controls">
+        <button id="previousStep" class="quiet-button" type="button">← Previous</button>
+        <button id="playSteps" type="button" aria-pressed="false">Play steps</button>
+        <button id="nextStep" class="quiet-button" type="button">Next →</button>
+      </div>
+      <p class="keyboard-hint">Tip: use the left and right arrow keys to move between steps.</p>
+    </section>
+
+    <section class="method-notes" aria-labelledby="method-heading">
+      <div>
+        <p class="section-label">The rule</p>
+        <h2 id="method-heading">Move the diagonal one place left</h2>
+      </div>
+      <ol>
+        <li><strong>Outside:</strong> multiply the active digit by the multiplier’s units digit.</li>
+        <li><strong>Inside:</strong> multiply its right-hand neighbor by the multiplier’s tens digit.</li>
+        <li><strong>Carry:</strong> add the incoming carry, write the units digit, and carry the rest.</li>
+      </ol>
+      <p>
+        The leading and edge zeros keep the same rule valid at both ends. The result is ordinary place-value multiplication reorganized by output column.
+      </p>
+    </section>
+  </main>
+
+  <script src="trachtenberg.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

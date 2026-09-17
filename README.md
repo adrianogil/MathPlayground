@@ -1,6 +1,26 @@
 # MathPlayground
 Python implementation to play with math
 
+## Interactive Trachtenberg walkthrough
+
+Open `web/trachtenberg-gifted/index.html` directly, or serve the repository and
+visit the example in a browser:
+
+```bash
+python3 -m http.server 8000
+```
+
+Then open <http://127.0.0.1:8000/web/trachtenberg-gifted/>. The page walks
+through `135 × 57 = 7,695`, the multiplication shown in *Gifted*, using the
+Trachtenberg direct method. It also accepts another positive multiplicand and
+any two-digit multiplier.
+
+Run the standalone arithmetic checks with:
+
+```bash
+node --test web/trachtenberg-gifted/trachtenberg.test.js
+```
+
 ## Numble
 
 Generate a repeatable Numble puzzle by passing a seed:
