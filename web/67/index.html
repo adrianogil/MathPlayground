@@ -7,6 +7,7 @@
   <meta name="description" content="Use todas as peças para chegar a 67. Um jogo de matemática para mentes curiosas.">
   <title>67 · MathPlayground</title>
   <link rel="stylesheet" href="styles.css">
+  <script src="puzzles.js" defer></script>
   <script src="engine.js" defer></script>
   <script src="i18n.js" defer></script>
   <script src="app.js" defer></script>
@@ -25,6 +26,7 @@
       <div class="game-layout">
         <section class="game-card" aria-labelledby="board-title">
           <div class="board-top"><h2 id="board-title"><span class="round-dot" aria-hidden="true"></span><span id="round-label"></span></h2><span class="badge" data-i18n="solvable"></span></div>
+          <div class="level-progress"><strong id="level-label"></strong><span id="level-help"></span></div>
           <div class="pieces-header"><h3 data-i18n="numbers"></h3><span id="pieces-left"></span></div>
           <div id="numbers" class="number-tray" role="group" aria-labelledby="board-title"></div>
           <div class="pieces-header operation-heading"><h3 data-i18n="operations"></h3><span data-i18n="once"></span></div>
@@ -37,7 +39,7 @@
           </section>
           <div id="status" class="status" role="status" aria-live="polite" aria-atomic="true"></div>
           <div class="toolbar"><button id="undo" type="button">↶ <span data-i18n="undo"></span></button><button id="restart" type="button">↺ <span data-i18n="restart"></span></button><button id="hint" type="button">✧ <span data-i18n="hint"></span></button></div>
-          <details id="history-panel"><summary><span data-i18n="history"></span><span id="history-count">0/4</span></summary><ol id="history"></ol></details>
+          <details id="history-panel"><summary><span data-i18n="history"></span><span id="history-count">0/1</span></summary><ol id="history"></ol></details>
         </section>
         <aside class="sidebar">
           <section class="target-card"><div class="target-top"><span data-i18n="target"></span><span aria-hidden="true">⚑</span></div><div class="target-number" aria-label="67">67<span class="face" aria-hidden="true"><i></i><i></i><b></b></span></div><p data-i18n="targetText"></p><div class="target-stars" aria-hidden="true">✦ <span>✦</span> ✦</div></section>

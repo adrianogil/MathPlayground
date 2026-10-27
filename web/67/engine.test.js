@@ -7,7 +7,7 @@ function finish(state, solution) {
   for (const step of solution) state = E.combine(state, step.aId, step.op, step.bId);
   return state;
 }
-test('starter uses both copies of 8 and every operation to reach 67', () => {
+test('five-piece arithmetic uses both copies of 8 and every operation to reach 67', () => {
   const initial = E.createState([8, 5, 4, 8, 2]);
   const result = finish(initial, [
     { aId: 0, op: '*', bId: 3 }, { aId: 2, op: '/', bId: 4 },
@@ -36,25 +36,69 @@ test('tiles and operations cannot be reused; early 67 is not a win', () => {
   assert.equal(early.tiles.at(-1).value.n, 67);
   assert.equal(E.won(early), false);
 });
-test('100 generated rounds are varied, bounded, solvable and use all operations', () => {
-  let seed = 6767;
-  const random = () => { seed = (Math.imul(1664525, seed) + 1013904223) >>> 0; return seed / 4294967296; };
-  const seen = new Set();
-  let previous = [];
-  for (let i = 0; i < 100; i++) {
-    const numbers = E.generate(random, previous);
-    assert.ok(numbers.every(n => n >= 1 && n <= 36));
-    const signature = [...numbers].sort((a, b) => a - b).join(',');
-    assert.notEqual(signature, [...previous].sort((a, b) => a - b).join(','));
-    seen.add(signature);
-    const state = E.createState(numbers), solution = E.solve(state);
-    assert.ok(solution, `No solution for ${numbers}`);
-    assert.equal(solution.length, 4);
-    assert.deepEqual(solution.map(step => step.op).sort(), [...E.OPS].sort());
-    assert.ok(E.won(finish(state, solution)));
-    previous = numbers;
+test('starts with two numbers; each win adds a piece, while skips do not', () => {
+  const starter = E.createState([40, 27], ['+']);
+  assert.equal(starter.tiles.length, 2);
+  assert.equal(starter.ops.length, 1);
+  assert.ok(E.won(E.combine(starter, 0, '+', 1)));
+  let level = 1;
+  for (let expected = 1; expected <= 4; expected++) {
+    assert.equal(level, expected);
+    assert.equal(E.levelAfter(level, false), level);
+    const puzzle = E.generate(level, () => 0.5);
+    assert.equal(puzzle.numbers.length, level + 1);
+    assert.equal(puzzle.ops.length, level);
+    level = E.levelAfter(level, true);
   }
-  assert.ok(seen.size > 80);
+  assert.equal(level, 4);
+});
+test('uniqueness ignores commutative order and identical tiles, but rejects different solutions', () => {
+  assert.equal(E.countSolutions(E.createState([40, 27], ['+'])), 1);
+  assert.equal(E.countSolutions(E.createState([8, 8, 3], ['*', '+'])), 1);
+  assert.equal(E.countSolutions(E.createState([1, 2], ['+'])), 0);
+  // The original unconstrained generator admitted several different answers.
+  assert.equal(E.countSolutions(E.createState([8, 20, 5, 6, 2])), 2);
+  assert.equal(E.countSolutions(E.createState([8, 5, 4, 8, 2])), 2);
+});
+test('every puzzle in all four levels has exactly one solution using all supplied pieces', () => {
+  const bank = require('./puzzles.js');
+  assert.equal(bank.length, 4);
+  for (const [index, puzzles] of bank.entries()) {
+    assert.equal(puzzles.length, 24);
+    for (const puzzle of puzzles) {
+      assert.equal(puzzle.numbers.length, index + 2);
+      assert.equal(puzzle.ops.length, index + 1);
+      const state = E.createState(puzzle.numbers, puzzle.ops);
+      assert.equal(E.countSolutions(state), 1, JSON.stringify(puzzle));
+      const solution = E.solve(state);
+      assert.equal(solution.length, puzzle.ops.length);
+      assert.deepEqual(solution.map(step => step.op).sort(), [...puzzle.ops].sort());
+      const result = finish(state, solution);
+      assert.ok(E.won(result));
+      assert.equal(result.tiles.length, 1);
+      assert.equal(result.ops.length, 0);
+      // Number labels do not affect uniqueness when the display order changes.
+      assert.equal(E.countSolutions(E.createState([...puzzle.numbers].reverse(), puzzle.ops)), 1);
+    }
+  }
+});
+test('new pieces preserve difficulty, avoid immediate repeats, and do not mutate the bank', () => {
+  const bank = require('./puzzles.js'), before = JSON.stringify(bank);
+  for (let level = 1; level <= 4; level++) {
+    const first = E.generate(level, () => 0);
+    const next = E.generate(level, () => 0, first);
+    assert.notDeepEqual([...first.numbers].sort(), [...next.numbers].sort());
+    assert.equal(next.level, level);
+    assert.equal(next.numbers.length, level + 1);
+    first.numbers[0] = 999;
+    first.ops.pop();
+  }
+  assert.equal(JSON.stringify(bank), before);
+});
+test('invalid deals cannot omit an operation or repeat a supplied operation', () => {
+  assert.throws(() => E.createState([40, 27], []), /operations/);
+  assert.throws(() => E.createState([40, 20, 7], ['+', '+']), /operations/);
+  assert.throws(() => E.createState([40, 27], ['?']), /operations/);
 });
 test('hints solve the current partial board and report dead ends', () => {
   const state = E.createState([8, 5, 4, 8, 2]);

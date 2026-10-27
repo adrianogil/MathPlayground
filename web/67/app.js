@@ -7,7 +7,8 @@
   let language = read('67-language');
   if (!messages[language]) language = 'pt-BR';
   let wins = Math.max(0, Math.min(99999, Number.parseInt(read('67-wins'), 10) || 0));
-  let round = 1, initial = [8, 5, 4, 8, 2], state = E.createState(initial), history = [];
+  let round = 1, level = 1, initial = { numbers: [40, 27], ops: ['+'], level: 1 };
+  let state = E.createState(initial.numbers, initial.ops), history = [];
   let aId = null, bId = null, op = null, awarded = false, notice = { key: 'ready', vars: {} };
   const t = (key, vars = {}) => messages[language][key].replace(/\{(\w+)\}/g, (_, name) => vars[name] ?? '');
   const opKeys = { '+': 'opAdd', '-': 'opSubtract', '*': 'opMultiply', '/': 'opDivide' };
@@ -27,19 +28,21 @@
   function render() {
     document.documentElement.lang = language;
     document.querySelector('meta[name="description"]').content = t('description');
-    document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
+    document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n, { numbers: initial.numbers.length, operations: initial.ops.length }); });
     $('language').value = language;
     $('round-label').textContent = t('round', { n: round });
+    $('level-label').textContent = t('level', { n: level });
+    $('level-help').textContent = t(level < 4 ? 'progressHelp' : 'masterHelp');
     $('pieces-left').textContent = t('piecesLeft', { n: state.tiles.length });
     $('operations').setAttribute('aria-label', t('operations'));
     $('numbers').replaceChildren(...state.tiles.map(piece => {
       const button = document.createElement('button');
       button.type = 'button'; button.className = 'number-tile';
-      if (piece.id >= 5) button.classList.add('result');
+      if (piece.id >= initial.numbers.length) button.classList.add('result');
       const value = E.format(piece.value);
       if (value.length > 3) button.classList.add('fraction');
       button.textContent = value; button.dataset.tileId = piece.id;
-      button.setAttribute('aria-label', piece.id >= 5 ? t('resultTile', { n: value, expression: piece.expression }) : t('selectTile', { n: value }));
+      button.setAttribute('aria-label', piece.id >= initial.numbers.length ? t('resultTile', { n: value, expression: piece.expression }) : t('selectTile', { n: value }));
       const selected = piece.id === aId || piece.id === bId;
       button.setAttribute('aria-pressed', String(selected));
       button.disabled = awarded || !state.ops.length;
@@ -47,7 +50,7 @@
       button.addEventListener('click', () => pick(piece.id));
       return button;
     }));
-    $('operations').replaceChildren(...E.OPS.map(operation => {
+    $('operations').replaceChildren(...initial.ops.map(operation => {
       const button = document.createElement('button'); button.type = 'button'; button.className = 'operation';
       button.textContent = E.symbols[operation]; button.dataset.operation = operation;
       button.disabled = !state.ops.includes(operation) || awarded;
@@ -73,7 +76,7 @@
     $('hint').disabled = awarded;
     $('status').textContent = t(notice.key, notice.vars);
     $('status').className = 'status' + (awarded ? ' success' : ['hintMove', 'noSolution'].includes(notice.key) ? ' hint' : '');
-    $('history-count').textContent = `${state.steps.length}/4`;
+    $('history-count').textContent = `${state.steps.length}/${initial.ops.length}`;
     $('history').replaceChildren(...state.steps.map(step => {
       const li = document.createElement('li'); li.textContent = equation(step); return li;
     }));
@@ -113,8 +116,8 @@
   $('slot-a').addEventListener('click', () => { aId = null; render(); $('numbers').querySelector('button:not(:disabled)')?.focus({ preventScroll: true }); });
   $('slot-b').addEventListener('click', () => { bId = null; render(); $('numbers').querySelector('button:not(:disabled)')?.focus({ preventScroll: true }); });
   $('undo').addEventListener('click', () => { if (history.length && !awarded) { state = history.pop(); clearSelection(); say('ready'); render(); $('numbers').querySelector('button').focus({ preventScroll: true }); } });
-  $('restart').addEventListener('click', () => { if (awarded) return; state = E.createState(initial); history = []; clearSelection(); say('ready'); render(); $('numbers').querySelector('button').focus({ preventScroll: true }); });
-  $('next').addEventListener('click', () => { initial = E.generate(Math.random, initial); state = E.createState(initial); history = []; awarded = false; round++; clearSelection(); say('ready'); render(); $('numbers').querySelector('button').focus({ preventScroll: true }); });
+  $('restart').addEventListener('click', () => { if (awarded) return; state = E.createState(initial.numbers, initial.ops); history = []; clearSelection(); say('ready'); render(); $('numbers').querySelector('button').focus({ preventScroll: true }); });
+  $('next').addEventListener('click', () => { level = E.levelAfter(level, awarded); initial = E.generate(level, Math.random, initial); state = E.createState(initial.numbers, initial.ops); history = []; awarded = false; round++; clearSelection(); say('ready'); render(); $('numbers').querySelector('button').focus({ preventScroll: true }); });
   $('hint').addEventListener('click', () => {
     if (awarded) return;
     const solution = E.solve(state);

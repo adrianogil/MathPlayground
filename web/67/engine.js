@@ -22,9 +22,10 @@
     }
   }
   const format = value => value.d === 1 ? String(value.n) : `${value.n}/${value.d}`;
-  function createState(numbers) {
-    if (numbers.length !== 5 || numbers.some(n => !Number.isInteger(n) || n < 1 || n > 36)) throw new Error('numbers');
-    return { tiles: numbers.map((n, i) => ({ id: i, value: rational(n), expression: String(n) })), ops: [...OPS], steps: [], nextId: 5 };
+  function createState(numbers, ops = OPS) {
+    if (numbers.length < 2 || numbers.length > 5 || numbers.some(n => !Number.isInteger(n) || n < 1 || n > 200)) throw new Error('numbers');
+    if (ops.length !== numbers.length - 1 || new Set(ops).size !== ops.length || ops.some(op => !OPS.includes(op))) throw new Error('operations');
+    return { tiles: numbers.map((n, i) => ({ id: i, value: rational(n), expression: String(n) })), ops: [...ops], steps: [], nextId: numbers.length };
   }
   function combine(state, aId, op, bId) {
     const a = state.tiles.find(t => t.id === aId), b = state.tiles.find(t => t.id === bId);
@@ -54,30 +55,49 @@
     }
     return visit(state);
   }
-  function generate(random = Math.random, previous = []) {
-    const int = (lo, hi) => lo + Math.floor(random() * (hi - lo + 1));
-    const signature = ns => [...ns].sort((a, b) => a - b).join(',');
-    let numbers;
-    for (let attempt = 0; attempt < 2000; attempt++) {
-      const family = int(0, 2);
-      if (family === 0) {
-        const a = int(5, 12), b = int(5, 12), q = int(1, 9), e = int(2, 6);
-        numbers = [a, b, 67 - a * b + q, q * e, e];
-      } else if (family === 1) {
-        const a = int(4, 20), b = int(4, 20), c = int(3, 9), e = int(2, 4);
-        numbers = [a, b, c, (a + b) * c - 67 * e, e];
-      } else {
-        const a = int(6, 20), b = int(6, 20), d = int(2, 5), e = int(1, 15);
-        numbers = [a, b, a * b - (67 - e) * d, d, e];
+  // Enumerate calculation trees, not move orders. Swapping equal tiles or the
+  // operands of + and × does not create a different solution. Subtraction and
+  // division remain ordered; no approximate arithmetic or numeric-only memo is used.
+  function countSolutions(state, limit = 2) {
+    const answers = new Set(), visited = new Set();
+    const initial = state.tiles.map(tile => ({ value: tile.value, key: format(tile.value) }));
+    function visit(tiles, ops) {
+      if (!ops.length) {
+        if (tiles.length === 1 && tiles[0].value.n === 67 * tiles[0].value.d) answers.add(tiles[0].key);
+        return;
       }
-      if (numbers.every(n => n >= 1 && n <= 36) && signature(numbers) !== signature(previous)) break;
-      numbers = null;
+      const key = tiles.map(t => t.key).sort().join('|') + ':' + ops.join('');
+      if (visited.has(key)) return;
+      visited.add(key);
+      for (const op of ops) for (let i = 0; i < tiles.length; i++) for (let j = 0; j < tiles.length; j++) {
+        if (i === j || ((op === '+' || op === '*') && j < i)) continue;
+        const a = tiles[i], b = tiles[j];
+        let value;
+        try { value = calculate(a.value, op, b.value); } catch { continue; }
+        let children = [a.key, b.key];
+        if (op === '+' || op === '*') children.sort();
+        const result = { value, key: `(${children[0]}${op}${children[1]})` };
+        visit([...tiles.filter((_, index) => index !== i && index !== j), result], ops.filter(o => o !== op));
+        if (answers.size >= limit) return;
+      }
     }
-    numbers ||= signature(previous) === '2,4,5,8,8' ? [7, 9, 6, 4, 2] : [8, 8, 5, 4, 2];
-    for (let i = numbers.length - 1; i > 0; i--) { const j = int(0, i); [numbers[i], numbers[j]] = [numbers[j], numbers[i]]; }
-    return numbers;
+    visit(initial, state.ops);
+    return answers.size;
   }
-  const api = { OPS, symbols, rational, calculate, format, createState, combine, won, solve, generate };
+  function levelAfter(level, completed) {
+    return Math.min(4, Math.max(1, level) + (completed ? 1 : 0));
+  }
+  function generate(level = 1, random = Math.random, previous = null) {
+    const bank = typeof module !== 'undefined' && module.exports ? require('./puzzles.js') : root.SixtySevenPuzzles;
+    level = Math.max(1, Math.min(4, Math.floor(level)));
+    const signature = puzzle => [...puzzle.numbers].sort((a, b) => a - b).join(',') + ':' + [...puzzle.ops].sort().join('');
+    const choices = bank[level - 1].filter(puzzle => !previous || signature(puzzle) !== signature(previous));
+    const selected = choices[Math.floor(random() * choices.length)];
+    const numbers = [...selected.numbers], ops = [...selected.ops];
+    for (let i = numbers.length - 1; i > 0; i--) { const j = Math.floor(random() * (i + 1)); [numbers[i], numbers[j]] = [numbers[j], numbers[i]]; }
+    return { numbers, ops, level };
+  }
+  const api = { OPS, symbols, rational, calculate, format, createState, combine, won, solve, countSolutions, levelAfter, generate };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.SixtySeven = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);

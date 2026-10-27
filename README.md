@@ -45,15 +45,27 @@ Open `web/67/index.html` directly in a browser, or serve the repository with
 This colorful, responsive HTML/CSS/JavaScript game works offline without a build
 step or external dependencies.
 
-Each round deals five numbers and one of each operation (`+`, `−`, `×`, `÷`).
+The first round starts with **two numbers and one operation** (40 + 27).
+Solving a round unlocks the next level: three numbers/two operations, then
+four/three, then five/four. Level 4 uses all four operations (`+`, `−`, `×`, `÷`).
+New pieces without a win stay at the same level; undo and restart do not advance
+it. Each new page session starts at level 1, independently of saved stars.
 Select two number tiles and an operation, then combine them. The result becomes
 a reusable number tile; the selected operation is consumed. Win by using every
 number and operation exactly once and finishing with **67**. Selection order
 matters for subtraction and division. Fractions and negative intermediate results
 use exact rational arithmetic; division by zero is rejected.
 
-Every new puzzle has a guaranteed solution. Undo, restart, a calculation history,
-and hints based on the current board support experimentation without a timer.
+The bank contains 24 puzzles per level, each exhaustively verified to have
+**exactly one solution** using all supplied pieces. Swapping the operands of
+addition/multiplication, swapping identical number tiles, or computing independent
+branches in a different order counts as the same solution. Different calculation
+trees are rejected, even when they happen to have the same final value. Negative
+and fractional intermediate values are included in the uniqueness check.
+`node web/67/build-puzzles.js` reproducibly rebuilds the checked bank. Choosing new
+pieces samples this bank without immediately repeating the same puzzle.
+
+Undo, restart, a calculation history, and hints based on the current board support experimentation without a timer.
 Completed rounds earn stars, saved locally when browser storage is available.
 Brazilian Portuguese is the default; English, French, Japanese, and Korean are
 available from the language menu. The chosen language is remembered locally,
