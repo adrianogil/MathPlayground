@@ -106,26 +106,28 @@ function renderSelection() {
 }
 
 function highlightRelated(value) {
-  // 1 has no prime factors, so selecting it clears the highlights.
-  highlightedNumber = value === 1 ? null : value;
+  // 1 acts as a shortcut to all primes; it still has no prime factors.
+  highlightedNumber = value;
   const number = highlightedNumber === null ? null : numbers[highlightedNumber - 1];
   const isPrime = number?.factors.length === 1;
   const factors = new Set(number?.factors ?? []);
   for (const button of numberGrids.flatMap(container => Array.from(container.children))) {
     const candidate = Number(button.dataset.number);
-    const related = number !== null && (isPrime ? candidate % value === 0 : factors.has(candidate));
-    const selectedComposite = number !== null && !isPrime && candidate === value;
+    const related = number !== null && (value === 1 ? primes.includes(candidate) : isPrime ? candidate % value === 0 : factors.has(candidate));
+    const selectedSource = number !== null && !isPrime && candidate === value;
     button.classList.toggle("is-related", related);
-    button.classList.toggle("is-muted", number !== null && !related && !selectedComposite);
+    button.classList.toggle("is-muted", number !== null && !related && !selectedSource);
   }
   for (const button of legend.children) {
     const prime = Number(button.dataset.prime);
     button.setAttribute("aria-pressed", String(Boolean(isPrime && prime === value)));
-    button.classList.toggle("is-factor", Boolean(number && !isPrime && factors.has(prime)));
+    button.classList.toggle("is-factor", Boolean(number && !isPrime && (value === 1 || factors.has(prime))));
   }
   document.querySelector("#clear-filter").disabled = number === null;
   document.querySelector("#filter-status").textContent = number === null
     ? t("showAll")
+    : value === 1
+      ? t("allPrimes", { count: primes.length })
     : isPrime
       ? t(Math.floor(100 / value) === 1 ? "multiplesOne" : "multiplesMany", { value, count: Math.floor(100 / value) })
       : t("factorsStatus", { value, factors: [...factors].join(", ") });

@@ -14,8 +14,9 @@ and accessibility labels. Switching languages preserves selections and highlight
 
 Select a prime in the grid to highlight all its multiples. Select a composite
 to highlight its distinct prime factors in the grid and palette, while keeping
-the selected composite visible. Selecting 1 or “Show all numbers” clears the
-highlights. The palette also toggles highlights for a prime's multiples.
+the selected composite visible. Selecting 1 highlights all 25 primes in both
+grids; “Show all numbers” clears the highlights. The palette also toggles
+highlights for a prime's multiples.
 Click the selected grid number again to deselect it and clear its highlights.
 A second grid below contains only the 25 primes. It shares selection and
 highlighting with the main grid, including highlighting a composite's prime
