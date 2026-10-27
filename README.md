@@ -1,6 +1,34 @@
 # MathPlayground
 Python implementation to play with math
 
+## 67 — use every piece
+
+Open `web/67/index.html` directly in a browser, or serve the repository with
+`python3 -m http.server 8000` and visit <http://127.0.0.1:8000/web/67/>.
+This colorful, responsive HTML/CSS/JavaScript game works offline without a build
+step or external dependencies.
+
+Each round deals five numbers and one of each operation (`+`, `−`, `×`, `÷`).
+Select two number tiles and an operation, then combine them. The result becomes
+a reusable number tile; the selected operation is consumed. Win by using every
+number and operation exactly once and finishing with **67**. Selection order
+matters for subtraction and division. Fractions and negative intermediate results
+use exact rational arithmetic; division by zero is rejected.
+
+Every new puzzle has a guaranteed solution. Undo, restart, a calculation history,
+and hints based on the current board support experimentation without a timer.
+Completed rounds earn stars, saved locally when browser storage is available.
+Brazilian Portuguese is the default; English, French, Japanese, and Korean are
+available from the language menu. The chosen language is remembered locally,
+and changing it preserves the current round. Controls support keyboard operation,
+status announcements, touch screens, and reduced-motion preferences.
+
+Run arithmetic, generator, solver, and translation checks with:
+
+```bash
+node --test web/67/engine.test.js
+```
+
 ## Star polygon waves
 
 Open `web/star-polygon-waves/index.html` directly in a browser, or serve the

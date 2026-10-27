@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#faf7ef">
+  <meta name="description" content="Use todas as peças para chegar a 67. Um jogo de matemática para mentes curiosas.">
+  <title>67 · MathPlayground</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="engine.js" defer></script>
+  <script src="i18n.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="page">
+    <header class="topbar">
+      <a class="brand" href="./" aria-label="67 · MathPlayground"><span class="brand-icon">67<span aria-hidden="true">✦</span></span><span>MathPlayground<small data-i18n="club"></small></span></a>
+      <label class="language"><span aria-hidden="true">◎</span><span class="sr-only" data-i18n="language"></span><select id="language"><option value="pt-BR">Português (Brasil)</option><option value="en">English</option><option value="fr">Français</option><option value="ja">日本語</option><option value="ko">한국어</option></select></label>
+    </header>
+    <main>
+      <section class="intro">
+        <div><p class="eyebrow"><span aria-hidden="true">✦</span> <span data-i18n="eyebrow"></span></p><h1 data-i18n="title"></h1><p class="subtitle" data-i18n="subtitle"></p></div>
+        <div class="intro-doodle" aria-hidden="true"><span>+</span><span>×</span><span>÷</span><i>✧</i></div>
+      </section>
+      <div class="game-layout">
+        <section class="game-card" aria-labelledby="board-title">
+          <div class="board-top"><h2 id="board-title"><span class="round-dot" aria-hidden="true"></span><span id="round-label"></span></h2><span class="badge" data-i18n="solvable"></span></div>
+          <div class="pieces-header"><h3 data-i18n="numbers"></h3><span id="pieces-left"></span></div>
+          <div id="numbers" class="number-tray" role="group" aria-labelledby="board-title"></div>
+          <div class="pieces-header operation-heading"><h3 data-i18n="operations"></h3><span data-i18n="once"></span></div>
+          <div id="operations" class="operation-tray" role="group"></div>
+          <section class="workbench" aria-labelledby="workbench-title">
+            <h3 id="workbench-title" data-i18n="workbench"></h3>
+            <div class="equation"><button id="slot-a" class="slot" type="button"></button><span id="slot-op" class="slot-op">?</span><button id="slot-b" class="slot" type="button"></button><span class="equals" aria-hidden="true">=</span><span id="preview" class="preview">?</span></div>
+            <p class="selection-help" data-i18n="selectionHelp"></p>
+            <button id="combine" class="primary" type="button"><span data-i18n="combine"></span><span aria-hidden="true"> ↗</span></button>
+          </section>
+          <div id="status" class="status" role="status" aria-live="polite" aria-atomic="true"></div>
+          <div class="toolbar"><button id="undo" type="button">↶ <span data-i18n="undo"></span></button><button id="restart" type="button">↺ <span data-i18n="restart"></span></button><button id="hint" type="button">✧ <span data-i18n="hint"></span></button></div>
+          <details id="history-panel"><summary><span data-i18n="history"></span><span id="history-count">0/4</span></summary><ol id="history"></ol></details>
+        </section>
+        <aside class="sidebar">
+          <section class="target-card"><div class="target-top"><span data-i18n="target"></span><span aria-hidden="true">⚑</span></div><div class="target-number" aria-label="67">67<span class="face" aria-hidden="true"><i></i><i></i><b></b></span></div><p data-i18n="targetText"></p><div class="target-stars" aria-hidden="true">✦ <span>✦</span> ✦</div></section>
+          <section class="progress-card"><div><span data-i18n="collection"></span><strong id="wins">0</strong></div><div id="stars" class="stars" aria-hidden="true"></div><p id="collection-text"></p></section>
+          <button id="next" class="next-button" type="button"><span data-i18n="newRound"></span><span aria-hidden="true">→</span></button>
+          <p class="no-timer" data-i18n="noTimer"></p>
+        </aside>
+      </div>
+      <section class="how-to" aria-labelledby="how-title"><h2 id="how-title" data-i18n="how"></h2><div class="instruction-grid"><article><span class="step peach">1</span><div><h3 data-i18n="step1Title"></h3><p data-i18n="step1"></p></div></article><article><span class="step mint">2</span><div><h3 data-i18n="step2Title"></h3><p data-i18n="step2"></p></div></article><article><span class="step lilac">3</span><div><h3 data-i18n="step3Title"></h3><p data-i18n="step3"></p></div></article></div></section>
+    </main>
+    <footer><span>67 / MathPlayground</span><span data-i18n="footer"></span><span aria-hidden="true">✳</span></footer>
+  </div>
+  <div id="confetti" aria-hidden="true"></div>
+  <noscript>Ative o JavaScript para jogar. / Enable JavaScript to play. / Activez JavaScript pour jouer. / JavaScriptを有効にしてください。 / JavaScript를 활성화해 주세요.</noscript>
+</body>
+</html>
