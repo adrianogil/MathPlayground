@@ -25,13 +25,13 @@
   function createState(numbers, ops = OPS) {
     if (numbers.length < 2 || numbers.length > 5 || numbers.some(n => !Number.isInteger(n) || n < 1 || n > 200)) throw new Error('numbers');
     if (ops.length !== numbers.length - 1 || new Set(ops).size !== ops.length || ops.some(op => !OPS.includes(op))) throw new Error('operations');
-    return { tiles: numbers.map((n, i) => ({ id: i, value: rational(n), expression: String(n) })), ops: [...ops], steps: [], nextId: numbers.length };
+    return { tiles: numbers.map((n, i) => ({ id: i, slot: i, value: rational(n), expression: String(n) })), ops: [...ops], steps: [], nextId: numbers.length };
   }
   function combine(state, aId, op, bId) {
     const a = state.tiles.find(t => t.id === aId), b = state.tiles.find(t => t.id === bId);
     if (!a || !b || aId === bId || !state.ops.includes(op)) throw new Error('selection');
     const value = calculate(a.value, op, b.value);
-    const result = { id: state.nextId, value, expression: `(${a.expression} ${symbols[op]} ${b.expression})` };
+    const result = { id: state.nextId, slot: Math.min(a.slot, b.slot), value, expression: `(${a.expression} ${symbols[op]} ${b.expression})` };
     return { tiles: [...state.tiles.filter(t => t !== a && t !== b), result], ops: state.ops.filter(o => o !== op),
       steps: [...state.steps, { a: a.value, op, b: b.value, value }], nextId: state.nextId + 1 };
   }

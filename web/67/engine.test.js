@@ -120,3 +120,14 @@ test('all five languages have every message and matching placeholders', () => {
     }
   }
 });
+
+test('merges retain stable board slots and leave unrelated tiles in place', () => {
+  const initial = E.createState([8, 5, 4, 8, 2]);
+  const merged = E.combine(initial, 4, '/', 2);
+  assert.deepEqual(merged.tiles.map(t => [t.id, t.slot]), [[0, 0], [1, 1], [3, 3], [5, 2]]);
+  const next = E.combine(merged, 3, '*', 0);
+  assert.deepEqual(next.tiles.map(t => [t.id, t.slot]), [[1, 1], [5, 2], [6, 0]]);
+  assert.equal(new Set(next.tiles.map(t => t.slot)).size, next.tiles.length);
+  assert.deepEqual(initial.tiles.map(t => t.slot), [0, 1, 2, 3, 4]);
+  assert.deepEqual(merged.tiles.map(t => t.slot), [0, 1, 3, 2], 'undo snapshots keep their layout');
+});

@@ -57,8 +57,13 @@ the third choice completes the selection, in any selection order. There is no
 confirmation button. Use Undo to reverse a move. Selecting a third number
 never silently replaces the second; swap and clear-selection controls make
 changes explicit. The result becomes
-a highlighted reusable number tile showing its expression; the selected operation
-is consumed. Original-number checkmarks, operation counts, and an always-visible
+a highlighted result tile in the leftmost selected slot; the selected operation
+is consumed. Tiles keep their positions, colors, and sizes; empty slots show a
+subtle checkmark, and narrow screens wrap larger boards into three columns.
+Selections appear directly on the tiles without a separate two-slot composer.
+Full expressions remain in accessible labels and the final summary; calculation
+steps stay in the history rather than stretching the number tiles.
+Original-number checkmarks, operation counts, and an always-visible
 calculation history make it clear how all pieces are used. The final result and
 full expression stay visible when the round ends. Win by using every
 number and operation exactly once and finishing with **67**. Selection order

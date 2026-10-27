@@ -76,7 +76,9 @@
       "numberInResult": "{n}: já faz parte de um resultado",
       "numberWaiting": "{n}: ainda precisa ser combinado",
       "allUsedWin": "Todas as peças usadas. Você fez 67!",
-      "allUsedRetry": "Você usou tudo! Desfaça um passo e tente outro caminho até 67."
+      "allUsedRetry": "Você usou tudo! Desfaça um passo e tente outro caminho até 67.",
+      "resultLabel": "Resultado",
+      "combinedTile": "Combinada"
     },
     "en": {
       "club": "The curious minds club",
@@ -153,7 +155,9 @@
       "numberInResult": "{n}: already included in a result",
       "numberWaiting": "{n}: still needs to be combined",
       "allUsedWin": "Every tile used. You made 67!",
-      "allUsedRetry": "You used everything! Undo a step and try another path to 67."
+      "allUsedRetry": "You used everything! Undo a step and try another path to 67.",
+      "resultLabel": "Result",
+      "combinedTile": "Combined"
     },
     "fr": {
       "club": "Le club des esprits curieux",
@@ -230,7 +234,9 @@
       "numberInResult": "{n} : fait déjà partie d’un résultat",
       "numberWaiting": "{n} : reste à combiner",
       "allUsedWin": "Toutes les tuiles utilisées. Tu as fait 67 !",
-      "allUsedRetry": "Tu as tout utilisé ! Annule une étape et essaie un autre chemin vers 67."
+      "allUsedRetry": "Tu as tout utilisé ! Annule une étape et essaie un autre chemin vers 67.",
+      "resultLabel": "Résultat",
+      "combinedTile": "Combinée"
     },
     "ja": {
       "club": "好奇心いっぱいのクラブ",
@@ -307,7 +313,9 @@
       "numberInResult": "{n}：答えのピースに入っているよ",
       "numberWaiting": "{n}：まだ組み合わせていないよ",
       "allUsedWin": "全部のピースを使って67になったね！",
-      "allUsedRetry": "全部使えたね！1つ戻して、67になる別の方法を試そう。"
+      "allUsedRetry": "全部使えたね！1つ戻して、67になる別の方法を試そう。",
+      "resultLabel": "答え",
+      "combinedTile": "使用済み"
     },
     "ko": {
       "club": "호기심 가득한 친구들의 모임",
@@ -384,7 +392,9 @@
       "numberInResult": "{n}: 이미 결과 조각에 포함되어 있어요",
       "numberWaiting": "{n}: 아직 합치지 않았어요",
       "allUsedWin": "모든 조각을 써서 67을 만들었어요!",
-      "allUsedRetry": "모두 사용했어요! 한 단계 되돌리고 67로 가는 다른 방법을 찾아봐요."
+      "allUsedRetry": "모두 사용했어요! 한 단계 되돌리고 67로 가는 다른 방법을 찾아봐요.",
+      "resultLabel": "결과",
+      "combinedTile": "사용 완료"
     }
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = messages;
