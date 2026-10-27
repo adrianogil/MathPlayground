@@ -1,6 +1,43 @@
 # MathPlayground
 Python implementation to play with math
 
+## Scale Lab
+
+Open [`web/scale-lab/index.html`](web/scale-lab/index.html) directly in a modern
+browser. This offline HTML/CSS/JavaScript lab connects decimals, metric length
+units, and scientific notation. It starts with the comparison `0.6 > 0.38`.
+
+- **Decimal microscope:** build values from 0 to 1 with a slider or decimal
+  input; inspect a hundred-square grid, place values, and three number-line zooms.
+- **Compare numbers:** compare nonnegative decimals up to 1,000 on a shared
+  scale; align decimal places and see the exact distance between the numbers.
+- **Switch units:** convert metric lengths from kilometres through millimetres.
+  Changing the output unit relabels the ruler without resizing the ribbon.
+- **Powers of ten:** move between a positive decimal and normalized scientific
+  notation with exponents from −6 to 6 and up to three significant digits.
+
+Each tab has **Explore** and **Practice** modes. Practice offers ten exercises
+per topic, cycling after the tenth, with untimed retries, visual explanations,
+and a solved count. Each tab retains its current exercise and Explore values
+while switching modes or languages; exercise progress lasts for the current
+page session. Hints and retries are allowed, so the solved count is not a test score.
+
+English, French, Japanese, Korean, and Brazilian Portuguese include translated
+controls, explanations, feedback, and accessible labels. English is the initial
+language; the last selection is remembered locally when browser storage is
+available. Decimal inputs accept either a dot or comma, without thousands
+separators. Keyboard users can switch tabs with arrow keys, Home, and End.
+
+No dependencies, build step, network requests, or account are required. Exact
+decimal arithmetic (integer digits plus a decimal scale) handles conversions
+and answer grading; only visual positioning uses floating-point arithmetic.
+
+Run arithmetic, exercise-bank, and translation checks:
+
+```bash
+node --test web/scale-lab/math.test.js
+```
+
 ## 67 — use every piece
 
 Open `web/67/index.html` directly in a browser, or serve the repository with

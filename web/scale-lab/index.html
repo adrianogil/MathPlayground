@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Explore and practise decimals, number comparison, metric units, and scientific notation in five languages.">
+  <title>Scale Lab · MathPlayground</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="math.js" defer></script>
+  <script src="i18n.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <main>
+    <header>
+      <div class="topbar">
+        <a class="brand" href="../prime-colors/index.html"><span class="brand-icon" aria-hidden="true">↗</span> MathPlayground <span class="brand-divider">/</span> <span>Scale Lab</span></a>
+        <label class="language"><span data-t="language">Language</span>
+          <select id="language">
+            <option value="en" lang="en">English</option>
+            <option value="fr" lang="fr">Français</option>
+            <option value="ja" lang="ja">日本語</option>
+            <option value="ko" lang="ko">한국어</option>
+            <option value="pt-BR" lang="pt-BR">Português (Brasil)</option>
+          </select>
+        </label>
+      </div>
+      <div class="hero">
+        <div><p class="eyebrow" data-t="eyebrow">A little perspective changes everything</p><h1 data-t="title">Small digits.<br>Big discoveries.</h1></div>
+        <div class="hero-note"><span class="tiny-ruler" aria-hidden="true"></span><p data-t="intro">One quantity, many ways to write it. Make sense of decimals, units, and powers of ten — one experiment at a time.</p></div>
+      </div>
+      <div class="identity"><span data-t="sameLength">The same length</span><strong id="identity-equation"></strong><span class="identity-end" aria-hidden="true">↔</span></div>
+    </header>
+    <nav id="tabs" class="tabs" role="tablist" aria-label="Experiments"></nav>
+    <section id="panel" role="tabpanel" tabindex="0">
+      <div class="section-top"><div><p class="eyebrow" id="chapter"></p><h2 id="section-title"></h2></div><div id="modes" class="mode-switch" role="group" aria-label="Mode"></div></div>
+      <p class="section-intro" id="section-intro"></p>
+      <div id="workspace"></div>
+    </section>
+    <footer><span>MathPlayground <span aria-hidden="true">↗</span> Scale Lab</span><p data-t="footer">Take your time. Try an idea. See what changes.</p></footer>
+    <noscript>This interactive lab requires JavaScript. / Este laboratório precisa de JavaScript.</noscript>
+  </main>
+</body>
+</html>
