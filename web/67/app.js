@@ -7,7 +7,7 @@
   let language = read('67-language');
   if (!messages[language]) language = 'pt-BR';
   let wins = Math.max(0, Math.min(99999, Number.parseInt(read('67-wins'), 10) || 0));
-  let round = 1, level = 1, initial = { numbers: [40, 27], ops: ['+'], level: 1 };
+  let round = 1, level = 1, levelSolved = 0, initial = { numbers: [40, 27], ops: ['+'], level: 1 };
   let state = E.createState(initial.numbers, initial.ops), history = [];
   let aId = null, bId = null, op = null, awarded = false, notice = { key: 'ready', vars: {} };
   const t = (key, vars = {}) => messages[language][key].replace(/\{(\w+)\}/g, (_, name) => vars[name] ?? '');
@@ -21,7 +21,7 @@
     else if (bId === id) bId = null;
     else if (aId === null) aId = id;
     else if (bId === null) bId = id;
-    else bId = id;
+    else { say('twoAtATime'); render(); document.querySelector(`[data-tile-id="${id}"]`)?.focus({ preventScroll: true }); return; }
     say('selected'); render();
     document.querySelector(`[data-tile-id="${id}"]`)?.focus({ preventScroll: true });
   }
@@ -32,7 +32,7 @@
     $('language').value = language;
     $('round-label').textContent = t('round', { n: round });
     $('level-label').textContent = t('level', { n: level });
-    $('level-help').textContent = t(level < 4 ? 'progressHelp' : 'masterHelp');
+    $('level-help').textContent = t(level < 4 ? (levelSolved >= E.PRACTICE_ROUNDS ? 'levelReady' : 'progressHelp') : 'masterHelp', { done: levelSolved, total: E.PRACTICE_ROUNDS });
     $('pieces-left').textContent = t('piecesLeft', { n: state.tiles.length });
     $('operations').setAttribute('aria-label', t('operations'));
     $('numbers').replaceChildren(...state.tiles.map(piece => {
@@ -41,7 +41,11 @@
       if (piece.id >= initial.numbers.length) button.classList.add('result');
       const value = E.format(piece.value);
       if (value.length > 3) button.classList.add('fraction');
-      button.textContent = value; button.dataset.tileId = piece.id;
+      const label = document.createElement('span'); label.className = 'tile-value'; label.textContent = value; button.append(label); button.dataset.tileId = piece.id;
+      if (piece.id >= initial.numbers.length) {
+        const origin = document.createElement('small'); origin.className = 'tile-origin'; origin.textContent = piece.expression; button.append(origin);
+        if (piece.id === state.nextId - 1) button.classList.add('new-result');
+      }
       button.setAttribute('aria-label', piece.id >= initial.numbers.length ? t('resultTile', { n: value, expression: piece.expression }) : t('selectTile', { n: value }));
       const selected = piece.id === aId || piece.id === bId;
       button.setAttribute('aria-pressed', String(selected));
@@ -71,11 +75,31 @@
     if (ready) { try { result = E.format(E.calculate(tile(aId).value, op, tile(bId).value)); } catch { result = '—'; } }
     $('preview').textContent = result;
     $('combine').disabled = !ready || awarded;
+    $('swap').disabled = aId === null || bId === null;
+    $('clear-selection').disabled = aId === null && bId === null && op === null;
+    $('selection-prompt').textContent = t(aId === null ? 'pickFirst' : op === null ? 'pickOperation' : bId === null ? 'pickSecond' : 'readyToCombine');
+    const finished = !state.ops.length;
+    $('composer').hidden = finished;
+    $('finished').hidden = !finished;
+    $('finished-value').textContent = finished ? E.format(state.tiles[0].value) : '';
+    $('finished-explanation').textContent = t(awarded ? 'allUsedWin' : 'allUsedRetry');
+    $('finished-expression').textContent = finished ? `${state.tiles[0].expression} = ${E.format(state.tiles[0].value)}` : '';
+    $('step-label').textContent = t(finished ? 'stepsDone' : 'stepLabel', { n: state.steps.length + 1, total: initial.ops.length });
+    const usedNumbers = initial.numbers.length - state.tiles.filter(piece => piece.id < initial.numbers.length).length;
+    $('usage-count').textContent = t('usageCount', { used: usedNumbers, numbers: initial.numbers.length, done: state.steps.length, operations: initial.ops.length });
+    $('original-pieces').replaceChildren(...initial.numbers.map((number, id) => {
+      const chip = document.createElement('span'), used = !tile(id);
+      chip.className = used ? 'incorporated' : '';
+      chip.textContent = `${used ? '✓ ' : ''}${number}`;
+      chip.setAttribute('aria-label', t(used ? 'numberInResult' : 'numberWaiting', { n: number }));
+      return chip;
+    }));
     $('undo').disabled = !history.length || awarded;
     $('restart').disabled = (!history.length && aId === null && bId === null && op === null) || awarded;
     $('hint').disabled = awarded;
     $('status').textContent = t(notice.key, notice.vars);
     $('status').className = 'status' + (awarded ? ' success' : ['hintMove', 'noSolution'].includes(notice.key) ? ' hint' : '');
+    $('history-panel').hidden = !state.steps.length;
     $('history-count').textContent = `${state.steps.length}/${initial.ops.length}`;
     $('history').replaceChildren(...state.steps.map(step => {
       const li = document.createElement('li'); li.textContent = equation(step); return li;
@@ -89,7 +113,8 @@
       if (i < (wins === 0 ? 0 : (wins - 1) % 5 + 1)) star.className = 'earned';
       return star;
     }));
-    $('next').querySelector('span').textContent = t(awarded ? 'nextRound' : 'newRound');
+    $('next').querySelector('span').textContent = t(awarded ? (level < 4 && levelSolved >= E.PRACTICE_ROUNDS ? 'nextLevel' : 'nextRound') : 'newRound');
+    $('practice-level').hidden = !(awarded && level < 4 && levelSolved >= E.PRACTICE_ROUNDS);
   }
   function equation(step) { return `${E.format(step.a)} ${E.symbols[step.op]} ${E.format(step.b)} = ${E.format(step.value)}`; }
   function celebrate() {
@@ -106,18 +131,29 @@
     let next;
     try { next = E.combine(state, aId, op, bId); } catch (error) { say(error.message === 'zero' ? 'zero' : 'range'); render(); return; }
     history.push(state); state = next; clearSelection();
-    if (E.won(state)) { awarded = true; wins++; save('67-wins', wins); say('win'); celebrate(); }
+    if (E.won(state)) { awarded = true; levelSolved = Math.min(E.PRACTICE_ROUNDS, levelSolved + 1); wins++; save('67-wins', wins); say('win'); celebrate(); }
     else if (!state.ops.length) say('miss', { n: E.format(state.tiles[0].value) });
     else if (state.tiles.some(piece => piece.value.n === 67 * piece.value.d)) say('early');
-    else say('afterMove');
+    else say('afterMove', { n: E.format(state.tiles.at(-1).value) });
     render();
-    (awarded ? $('next') : state.ops.length ? $('numbers').querySelector('button') : $('undo')).focus({ preventScroll: true });
+    (awarded ? $('next') : state.ops.length ? $('numbers').querySelector(`[data-tile-id="${state.nextId - 1}"]`) : $('undo')).focus();
   });
   $('slot-a').addEventListener('click', () => { aId = null; render(); $('numbers').querySelector('button:not(:disabled)')?.focus({ preventScroll: true }); });
   $('slot-b').addEventListener('click', () => { bId = null; render(); $('numbers').querySelector('button:not(:disabled)')?.focus({ preventScroll: true }); });
   $('undo').addEventListener('click', () => { if (history.length && !awarded) { state = history.pop(); clearSelection(); say('ready'); render(); $('numbers').querySelector('button').focus({ preventScroll: true }); } });
   $('restart').addEventListener('click', () => { if (awarded) return; state = E.createState(initial.numbers, initial.ops); history = []; clearSelection(); say('ready'); render(); $('numbers').querySelector('button').focus({ preventScroll: true }); });
-  $('next').addEventListener('click', () => { level = E.levelAfter(level, awarded); initial = E.generate(level, Math.random, initial); state = E.createState(initial.numbers, initial.ops); history = []; awarded = false; round++; clearSelection(); say('ready'); render(); $('numbers').querySelector('button').focus({ preventScroll: true }); });
+  function nextRound(stay = false) {
+    const nextLevel = stay ? level : E.levelAfter(level, levelSolved);
+    if (nextLevel !== level || stay) levelSolved = 0;
+    level = nextLevel;
+    initial = E.generate(level, Math.random, initial);
+    state = E.createState(initial.numbers, initial.ops); history = []; awarded = false; round++;
+    clearSelection(); say('ready'); render(); $('numbers').querySelector('button').focus({ preventScroll: true });
+  }
+  $('next').addEventListener('click', () => nextRound());
+  $('practice-level').addEventListener('click', () => nextRound(true));
+  $('swap').addEventListener('click', () => { [aId, bId] = [bId, aId]; say('selected'); render(); });
+  $('clear-selection').addEventListener('click', () => { clearSelection(); say('ready'); render(); $('numbers').querySelector('button').focus({ preventScroll: true }); });
   $('hint').addEventListener('click', () => {
     if (awarded) return;
     const solution = E.solve(state);

@@ -84,8 +84,9 @@
     visit(initial, state.ops);
     return answers.size;
   }
-  function levelAfter(level, completed) {
-    return Math.min(4, Math.max(1, level) + (completed ? 1 : 0));
+  const PRACTICE_ROUNDS = 5;
+  function levelAfter(level, solved) {
+    return Math.min(4, Math.max(1, level) + (solved >= PRACTICE_ROUNDS ? 1 : 0));
   }
   function generate(level = 1, random = Math.random, previous = null) {
     const bank = typeof module !== 'undefined' && module.exports ? require('./puzzles.js') : root.SixtySevenPuzzles;
@@ -97,7 +98,7 @@
     for (let i = numbers.length - 1; i > 0; i--) { const j = Math.floor(random() * (i + 1)); [numbers[i], numbers[j]] = [numbers[j], numbers[i]]; }
     return { numbers, ops, level };
   }
-  const api = { OPS, symbols, rational, calculate, format, createState, combine, won, solve, countSolutions, levelAfter, generate };
+  const api = { OPS, symbols, rational, calculate, format, createState, combine, won, solve, countSolutions, PRACTICE_ROUNDS, levelAfter, generate };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.SixtySeven = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);

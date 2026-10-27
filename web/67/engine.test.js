@@ -36,7 +36,7 @@ test('tiles and operations cannot be reused; early 67 is not a win', () => {
   assert.equal(early.tiles.at(-1).value.n, 67);
   assert.equal(E.won(early), false);
 });
-test('starts with two numbers; each win adds a piece, while skips do not', () => {
+test('starts with two numbers and requires five solved rounds before adding a piece', () => {
   const starter = E.createState([40, 27], ['+']);
   assert.equal(starter.tiles.length, 2);
   assert.equal(starter.ops.length, 1);
@@ -44,13 +44,15 @@ test('starts with two numbers; each win adds a piece, while skips do not', () =>
   let level = 1;
   for (let expected = 1; expected <= 4; expected++) {
     assert.equal(level, expected);
-    assert.equal(E.levelAfter(level, false), level);
+    for (let solved = 0; solved < E.PRACTICE_ROUNDS; solved++) assert.equal(E.levelAfter(level, solved), level);
+    assert.equal(E.levelAfter(level, 0), level, 'extra practice starts a fresh set at the same level');
     const puzzle = E.generate(level, () => 0.5);
     assert.equal(puzzle.numbers.length, level + 1);
     assert.equal(puzzle.ops.length, level);
-    level = E.levelAfter(level, true);
+    level = E.levelAfter(level, E.PRACTICE_ROUNDS);
   }
   assert.equal(level, 4);
+  assert.equal(E.PRACTICE_ROUNDS, 5);
 });
 test('uniqueness ignores commutative order and identical tiles, but rejects different solutions', () => {
   assert.equal(E.countSolutions(E.createState([40, 27], ['+'])), 1);

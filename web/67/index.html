@@ -27,24 +27,31 @@
         <section class="game-card" aria-labelledby="board-title">
           <div class="board-top"><h2 id="board-title"><span class="round-dot" aria-hidden="true"></span><span id="round-label"></span></h2><span class="badge" data-i18n="solvable"></span></div>
           <div class="level-progress"><strong id="level-label"></strong><span id="level-help"></span></div>
-          <div class="pieces-header"><h3 data-i18n="numbers"></h3><span id="pieces-left"></span></div>
-          <div id="numbers" class="number-tray" role="group" aria-labelledby="board-title"></div>
-          <div class="pieces-header operation-heading"><h3 data-i18n="operations"></h3><span data-i18n="once"></span></div>
-          <div id="operations" class="operation-tray" role="group"></div>
           <section class="workbench" aria-labelledby="workbench-title">
-            <h3 id="workbench-title" data-i18n="workbench"></h3>
-            <div class="equation"><button id="slot-a" class="slot" type="button"></button><span id="slot-op" class="slot-op">?</span><button id="slot-b" class="slot" type="button"></button><span class="equals" aria-hidden="true">=</span><span id="preview" class="preview">?</span></div>
-            <p class="selection-help" data-i18n="selectionHelp"></p>
-            <button id="combine" class="primary" type="button"><span data-i18n="combine"></span><span aria-hidden="true"> ↗</span></button>
+            <div class="workbench-heading"><h3 id="workbench-title" data-i18n="workbench"></h3><span id="step-label"></span></div>
+            <p class="workbench-intro" data-i18n="selectionHelp"></p>
+            <div class="pieces-header"><h3 data-i18n="numbers"></h3><span id="pieces-left"></span></div>
+            <div id="numbers" class="number-tray" role="group" aria-labelledby="workbench-title"></div>
+            <div class="pieces-header operation-heading"><h3 data-i18n="operations"></h3><span data-i18n="once"></span></div>
+            <div id="operations" class="operation-tray" role="group"></div>
+            <div id="composer" class="composer">
+              <p id="selection-prompt" class="selection-prompt"></p>
+              <div class="equation"><button id="slot-a" class="slot" type="button"></button><span id="slot-op" class="slot-op">?</span><button id="slot-b" class="slot" type="button"></button><span class="equals" aria-hidden="true">=</span><span id="preview" class="preview">?</span></div>
+              <div class="selection-tools"><button id="swap" type="button" data-i18n="swap"></button><button id="clear-selection" type="button" data-i18n="clearSelection"></button></div>
+              <button id="combine" class="primary" type="button"><span data-i18n="combine"></span><span aria-hidden="true"> ↗</span></button>
+            </div>
+            <div id="finished" class="finished" hidden><strong id="finished-value"></strong><p id="finished-explanation"></p><p id="finished-expression"></p></div>
+            <div class="usage"><p id="usage-count"></p><div id="original-pieces" class="original-pieces"></div></div>
+            <section id="history-panel" class="calculation-path" aria-labelledby="history-title"><h4 id="history-title"><span data-i18n="history"></span><span id="history-count">0/1</span></h4><ol id="history"></ol></section>
           </section>
           <div id="status" class="status" role="status" aria-live="polite" aria-atomic="true"></div>
           <div class="toolbar"><button id="undo" type="button">↶ <span data-i18n="undo"></span></button><button id="restart" type="button">↺ <span data-i18n="restart"></span></button><button id="hint" type="button">✧ <span data-i18n="hint"></span></button></div>
-          <details id="history-panel"><summary><span data-i18n="history"></span><span id="history-count">0/1</span></summary><ol id="history"></ol></details>
         </section>
         <aside class="sidebar">
           <section class="target-card"><div class="target-top"><span data-i18n="target"></span><span aria-hidden="true">⚑</span></div><div class="target-number" aria-label="67">67<span class="face" aria-hidden="true"><i></i><i></i><b></b></span></div><p data-i18n="targetText"></p><div class="target-stars" aria-hidden="true">✦ <span>✦</span> ✦</div></section>
           <section class="progress-card"><div><span data-i18n="collection"></span><strong id="wins">0</strong></div><div id="stars" class="stars" aria-hidden="true"></div><p id="collection-text"></p></section>
           <button id="next" class="next-button" type="button"><span data-i18n="newRound"></span><span aria-hidden="true">→</span></button>
+          <button id="practice-level" class="practice-button" type="button" data-i18n="practiceHere" hidden></button>
           <p class="no-timer" data-i18n="noTimer"></p>
         </aside>
       </div>

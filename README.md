@@ -46,12 +46,19 @@ This colorful, responsive HTML/CSS/JavaScript game works offline without a build
 step or external dependencies.
 
 The first round starts with **two numbers and one operation** (40 + 27).
-Solving a round unlocks the next level: three numbers/two operations, then
-four/three, then five/four. Level 4 uses all four operations (`+`, `−`, `×`, `÷`).
+Solve **five puzzles per level** before unlocking another number and operation:
+three numbers/two operations, then four/three, then five/four. After five wins,
+choose the next level or **More practice here** for another set at the same level. Level 4 uses all four operations (`+`, `−`, `×`, `÷`).
 New pieces without a win stay at the same level; undo and restart do not advance
 it. Each new page session starts at level 1, independently of saved stars.
-Select two number tiles and an operation, then combine them. The result becomes
-a reusable number tile; the selected operation is consumed. Win by using every
+The workspace keeps all remaining number and operation tiles together. Select
+two number tiles and an operation, then combine them. Selecting a third number
+never silently replaces the second; swap and clear-selection controls make
+changes explicit. The result becomes
+a highlighted reusable number tile showing its expression; the selected operation
+is consumed. Original-number checkmarks, operation counts, and an always-visible
+calculation history make it clear how all pieces are used. The final result and
+full expression stay visible when the round ends. Win by using every
 number and operation exactly once and finishing with **67**. Selection order
 matters for subtraction and division. Fractions and negative intermediate results
 use exact rational arithmetic; division by zero is rejected.
