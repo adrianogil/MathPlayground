@@ -1,6 +1,17 @@
 # MathPlayground
 Python implementation to play with math
 
+## Prime colors
+
+Open `web/prime-colors/index.html` directly in a browser. This offline HTML/CSS/JS
+exploration displays 1–100 in a rounded-square grid, with a unique color for each
+prime and one colored band per prime factor (including repeated factors) for
+composites. The number 1 is neutral because it has no prime factors.
+
+Select a number for its factorization, or select a prime in the palette to
+highlight its multiples. Arrow keys move through the ten-column grid; Enter or
+Space selects the focused number. No dependencies or build step are required.
+
 ## Interactive Trachtenberg walkthrough
 
 Open `web/trachtenberg-gifted/index.html` directly, or serve the repository and

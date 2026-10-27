@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Explore the prime factors of every number from 1 to 100 through color.">
+  <title>Prime colors · MathPlayground</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <main>
+    <header class="hero">
+      <div class="brand"><span class="brand-mark" aria-hidden="true">✳</span> MathPlayground <span class="divider">/</span> Number explorations</div>
+      <p class="eyebrow">A little color. A little number theory.</p>
+      <h1>Every number has<br>a <em>prime palette.</em></h1>
+      <p class="intro">Primes are the building blocks. Give each one a color,<br class="desktop-break"> and watch the numbers from 1 to 100 come together.</p>
+    </header>
+
+    <div class="workspace">
+      <section class="board" aria-labelledby="grid-title">
+        <div class="section-heading">
+          <h2 id="grid-title">The number garden</h2>
+          <span class="range">01 — 100</span>
+        </div>
+        <p class="board-hint">Pick a number to see what it’s made of.</p>
+        <div id="number-grid" class="number-grid" aria-label="Numbers 1 to 100"></div>
+        <div class="board-footer"><span><i class="prime-marker" aria-hidden="true"></i> A dot marks a prime</span><span>One band per prime factor</span></div>
+        <p id="filter-status" class="filter-status" role="status">Showing all 100 numbers</p>
+      </section>
+
+      <aside class="sidebar">
+        <section class="inspector" aria-labelledby="detail-heading">
+          <p class="eyebrow" id="detail-heading">Under the colors</p>
+          <div class="detail-top"><div id="selected-tile" class="selected-tile" aria-hidden="true"></div><span id="number-kind" class="kind"></span></div>
+          <div id="number-detail" aria-live="polite" aria-atomic="true">
+            <h2 id="equation"></h2>
+            <div id="factor-chips" class="factor-chips"></div>
+            <p id="explanation"></p>
+          </div>
+        </section>
+
+        <section class="legend" aria-labelledby="legend-heading">
+          <div class="section-heading"><h2 id="legend-heading">The prime palette</h2><span class="count">25</span></div>
+          <p>Choose a prime to find its multiples.</p>
+          <div id="prime-legend" class="prime-legend"></div>
+          <button id="clear-filter" class="clear-filter" type="button" disabled>Show all numbers <span aria-hidden="true">↗</span></button>
+        </section>
+      </aside>
+    </div>
+
+    <footer class="page-footer"><span>Small factors. Endless patterns.</span><p><strong>What about 1?</strong> It’s neither prime nor composite, so it has no prime colors.</p></footer>
+    <noscript>This interactive grid needs JavaScript enabled to display the numbers and their prime factors.</noscript>
+  </main>
+</body>
+</html>
