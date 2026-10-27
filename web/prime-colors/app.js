@@ -57,19 +57,27 @@ function describe(number) {
 }
 
 function selectNumber(value, highlight = true) {
-  selectedNumber = value;
-  const number = numbers[value - 1];
-  const isPrime = number.factors.length === 1;
+  selectedNumber = highlight && selectedNumber === value ? null : value;
   for (const button of grid.children) {
     button.setAttribute("aria-pressed", String(Number(button.dataset.number) === selectedNumber));
   }
   const preview = document.querySelector("#selected-tile");
   preview.replaceChildren();
+  const chips = document.querySelector("#factor-chips");
+  chips.replaceChildren();
+  if (selectedNumber === null) {
+    preview.textContent = "—";
+    document.querySelector("#number-kind").textContent = "No selection";
+    document.querySelector("#equation").textContent = "Pick a number";
+    document.querySelector("#explanation").textContent = "Select a prime to see its multiples, or a composite to see its prime factors. Click the selected number again to deselect it.";
+    highlightRelated(null);
+    return;
+  }
+  const number = numbers[value - 1];
+  const isPrime = number.factors.length === 1;
   addBands(preview, number);
   document.querySelector("#number-kind").textContent = value === 1 ? "The unit" : isPrime ? "Prime number" : "Composite";
   document.querySelector("#equation").textContent = value === 1 ? "1 has no prime factors" : isPrime ? `${value} is prime` : `${value} = ${number.factors.join(" × ")}`;
-  const chips = document.querySelector("#factor-chips");
-  chips.replaceChildren();
   for (const factor of [...new Set(number.factors)]) {
     const chip = document.createElement("span");
     chip.className = "factor-chip";
