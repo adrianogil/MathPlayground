@@ -11,6 +11,7 @@
     { n: 29, k: 17, name: 'Icosienneagram', color: '#ed8865' }
   ];
   let phase = 0;
+  let revealed = 0;
   let playing = !matchMedia('(prefers-reduced-motion: reduce)').matches;
   let lastTime = null;
   let custom = null;
@@ -56,11 +57,11 @@
       svgElement('line', { x1: x, x2: x, y1: o.cy - o.r - 4, y2: o.cy + o.r + 4, stroke: '#29312c', 'stroke-width': 1, 'stroke-dasharray': '2 5' }, o.svg);
     }
     o.guide = svgElement('circle', { cx: o.cx, cy: o.cy, r: o.r, fill: 'none', stroke: '#6d7a70', 'stroke-dasharray': '2 4' }, o.svg);
-    const components = M.gcd(o.n, o.k), count = M.period(o.n, o.k);
-    for (let offset = components - 1; offset >= 0; offset--) {
-      const vertices = Array.from({ length: count + 1 }, (_, j) => screen(M.vertex(o.n, o.k, j, offset)));
-      svgElement('path', { d: path(vertices), fill: 'none', stroke: o.color, 'stroke-width': 1.5, 'stroke-opacity': offset === 0 ? .88 : .3, 'stroke-linejoin': 'round' }, o.svg);
-    }
+    const count = M.period(o.n, o.k);
+    const vertices = Array.from({ length: count + 1 }, (_, j) => screen(M.vertex(o.n, o.k, j)));
+    // Equal-length edges make normalized path length match circuit progress.
+    // Only reveal the component visited by this dot; other paths stay invisible.
+    o.polygon = svgElement('path', { class: 'polygon-trail', d: path(vertices), fill: 'none', stroke: o.color, 'stroke-width': 1.5, 'stroke-opacity': .88, 'stroke-linejoin': 'round', pathLength: 1, 'stroke-dasharray': '1 1' }, o.svg);
     o.envelope = svgElement('path', { fill: 'none', stroke: '#c4dea1', 'stroke-width': 1, 'stroke-opacity': .5, 'stroke-dasharray': '3 5' }, o.svg);
     o.wave = svgElement('path', { fill: 'none', stroke: o.color, 'stroke-width': 1.65, 'stroke-linejoin': 'round', 'stroke-linecap': 'round' }, o.svg);
     o.samples = svgElement('g', { fill: o.color }, o.svg);
@@ -71,6 +72,8 @@
     renderRow(o);
   }
   function renderRow(o) {
+    o.polygon.setAttribute('stroke-dashoffset', 1 - revealed);
+    o.polygon.style.visibility = revealed === 0 ? 'hidden' : 'visible';
     const period = M.period(o.n, o.k), edge = phase * period, span = period * 2;
     const p = M.position(o.n, o.k, edge);
     const x = o.cx + p.x * o.r, y = o.cy - p.y * o.r;
@@ -119,14 +122,14 @@
     const components = M.gcd(n, k);
     $('custom-info').textContent = components === 1
       ? `All ${n} vertices belong to one path. The dot closes its circuit after ${n} edges.`
-      : `gcd(${n}, ${k}) = ${components}: this figure has ${components} separate paths. The dot follows the bright path of ${n / components} vertices; the other paths are dimmed.`;
+      : `gcd(${n}, ${k}) = ${components}: this figure has ${components} separate paths. The dot traces one path of ${n / components} vertices; unvisited paths stay invisible.`;
     if (2 * k === n) $('custom-info').textContent += ' This is a degenerate case: each path goes back and forth along a diameter.';
     render();
   }
   presets.forEach(p => rows.push(createRow(p, $('examples'))));
   $('play').addEventListener('click', () => { playing = !playing; updatePlayback(); });
-  $('restart').addEventListener('click', () => { phase = 0; lastTime = null; render(); });
-  $('phase').addEventListener('input', () => { phase = Number($('phase').value) / 1000; playing = false; updatePlayback(); render(); });
+  $('restart').addEventListener('click', () => { phase = 0; revealed = 0; lastTime = null; render(); });
+  $('phase').addEventListener('input', () => { phase = Number($('phase').value) / 1000; revealed = phase; playing = false; updatePlayback(); render(); });
   $('speed').addEventListener('change', () => { lastTime = null; });
   for (const id of ['circles', 'samples', 'envelope']) $(id).addEventListener('change', render);
   $('custom-n').addEventListener('input', () => { $('custom-k').max = Math.max(1, Number($('custom-n').value) - 1); });
@@ -139,7 +142,11 @@
   document.addEventListener('visibilitychange', () => { lastTime = null; });
   function tick(now) {
     if (playing && !document.hidden) {
-      if (lastTime !== null) phase = (phase + (now - lastTime) / 12000 * Number($('speed').value)) % 1;
+      if (lastTime !== null) {
+        const advance = (now - lastTime) / 12000 * Number($('speed').value);
+        phase = (phase + advance) % 1;
+        revealed = Math.min(1, revealed + advance);
+      }
       render();
     }
     lastTime = now;

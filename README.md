@@ -81,9 +81,13 @@ Pause, restart, change speed, or scrub the circuit position. Toggle guide circle
 sample points, and the {25/12} aliasing envelope. Reduced-motion preferences
 start playback paused.
 
+Polygon edges start invisible and appear behind the moving dot. The completed
+path stays visible on later circuits. Restart clears it; scrubbing reveals only
+the portion up to the selected circuit position.
+
 The custom explorer accepts 3–80 vertices and a step from 1 to n−1. For
-non-coprime pairs, it draws every component and follows one closed path,
-explaining its shorter period. Invalid input keeps the last valid drawing.
+non-coprime pairs, it traces one closed component and leaves unvisited paths
+invisible, explaining its shorter period. Invalid input keeps the last valid drawing.
 
 Run the geometry and sampling checks with:
 
