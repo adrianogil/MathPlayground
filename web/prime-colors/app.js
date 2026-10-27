@@ -32,7 +32,7 @@ const colors = new Map(primes.map((prime, index) => [prime, palette[index]]));
 const grid = document.querySelector("#number-grid");
 const legend = document.querySelector("#prime-legend");
 let selectedNumber = 60;
-let activePrime = null;
+let highlightedNumber = null;
 
 function addBands(element, number) {
   const bands = document.createElement("span");
@@ -56,7 +56,7 @@ function describe(number) {
   return `${number.value} = ${number.factors.join(" × ")}`;
 }
 
-function selectNumber(value) {
+function selectNumber(value, highlight = true) {
   selectedNumber = value;
   const number = numbers[value - 1];
   const isPrime = number.factors.length === 1;
@@ -85,20 +85,37 @@ function selectNumber(value) {
     : isPrime
       ? `Only 1 and ${value} divide ${value} exactly. It gets one color, which appears in every multiple of ${value}.`
       : `${number.factors.length} prime factors, ${new Set(number.factors).size} ${new Set(number.factors).size === 1 ? "color" : "colors"}. Each band is one factor; repeated primes repeat the same color. Multiply the factors to get ${value}.`;
+  if (highlight) highlightRelated(value);
+}
+
+function highlightRelated(value) {
+  // 1 has no prime factors, so selecting it clears the highlights.
+  highlightedNumber = value === 1 ? null : value;
+  const number = highlightedNumber === null ? null : numbers[highlightedNumber - 1];
+  const isPrime = number?.factors.length === 1;
+  const factors = new Set(number?.factors ?? []);
+  for (const button of grid.children) {
+    const candidate = Number(button.dataset.number);
+    const related = number !== null && (isPrime ? candidate % value === 0 : factors.has(candidate));
+    const selectedComposite = number !== null && !isPrime && candidate === value;
+    button.classList.toggle("is-related", related);
+    button.classList.toggle("is-muted", number !== null && !related && !selectedComposite);
+  }
+  for (const button of legend.children) {
+    const prime = Number(button.dataset.prime);
+    button.setAttribute("aria-pressed", String(Boolean(isPrime && prime === value)));
+    button.classList.toggle("is-factor", Boolean(number && !isPrime && factors.has(prime)));
+  }
+  document.querySelector("#clear-filter").disabled = number === null;
+  document.querySelector("#filter-status").textContent = number === null
+    ? "Showing all 100 numbers"
+    : isPrime
+      ? `Highlighting ${Math.floor(100 / value)} multiples of ${value}`
+      : `Prime factors of ${value}: ${[...factors].join(", ")} · the selected number stays visible`;
 }
 
 function filterPrime(prime) {
-  activePrime = activePrime === prime ? null : prime;
-  for (const button of grid.children) {
-    button.classList.toggle("is-muted", activePrime !== null && Number(button.dataset.number) % activePrime !== 0);
-  }
-  for (const button of legend.children) {
-    button.setAttribute("aria-pressed", String(Number(button.dataset.prime) === activePrime));
-  }
-  document.querySelector("#clear-filter").disabled = activePrime === null;
-  document.querySelector("#filter-status").textContent = activePrime === null
-    ? "Showing all 100 numbers"
-    : `Highlighting ${Math.floor(100 / activePrime)} multiples of ${activePrime} · select the prime again to clear`;
+  highlightRelated(highlightedNumber === prime ? null : prime);
 }
 
 for (const number of numbers) {
@@ -136,5 +153,5 @@ for (const prime of primes) {
   legend.append(button);
 }
 
-document.querySelector("#clear-filter").addEventListener("click", () => filterPrime(null));
-selectNumber(selectedNumber);
+document.querySelector("#clear-filter").addEventListener("click", () => highlightRelated(null));
+selectNumber(selectedNumber, false);

@@ -8,8 +8,11 @@ exploration displays 1–100 in a rounded-square grid, with a unique color for e
 prime and one colored band per prime factor (including repeated factors) for
 composites. The number 1 is neutral because it has no prime factors.
 
-Select a number for its factorization, or select a prime in the palette to
-highlight its multiples. Arrow keys move through the ten-column grid; Enter or
+Select a prime in the grid to highlight all its multiples. Select a composite
+to highlight its distinct prime factors in the grid and palette, while keeping
+the selected composite visible. Selecting 1 or “Show all numbers” clears the
+highlights. The palette also toggles highlights for a prime's multiples.
+Every grid selection shows its factorization. Arrow keys move through the ten-column grid; Enter or
 Space selects the focused number. No dependencies or build step are required.
 
 ## Interactive Trachtenberg walkthrough
