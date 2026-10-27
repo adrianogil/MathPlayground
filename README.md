@@ -52,7 +52,9 @@ choose the next level or **More practice here** for another set at the same leve
 New pieces without a win stay at the same level; undo and restart do not advance
 it. Each new page session starts at level 1, independently of saved stars.
 The workspace keeps all remaining number and operation tiles together. Select
-two number tiles and an operation, then combine them. Selecting a third number
+two number tiles and an operation: the calculation happens immediately when
+the third choice completes the selection, in any selection order. There is no
+confirmation button. Use Undo to reverse a move. Selecting a third number
 never silently replaces the second; swap and clear-selection controls make
 changes explicit. The result becomes
 a highlighted reusable number tile showing its expression; the selected operation

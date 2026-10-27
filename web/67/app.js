@@ -22,7 +22,9 @@
     else if (aId === null) aId = id;
     else if (bId === null) bId = id;
     else { say('twoAtATime'); render(); document.querySelector(`[data-tile-id="${id}"]`)?.focus({ preventScroll: true }); return; }
-    say('selected'); render();
+    say('selected');
+    if (combineSelection()) return;
+    render();
     document.querySelector(`[data-tile-id="${id}"]`)?.focus({ preventScroll: true });
   }
   function render() {
@@ -60,7 +62,11 @@
       button.disabled = !state.ops.includes(operation) || awarded;
       button.setAttribute('aria-pressed', String(op === operation));
       button.setAttribute('aria-label', t(opKeys[operation]) + (button.disabled ? ` (${t('used')})` : ''));
-      button.addEventListener('click', () => { op = op === operation ? null : operation; say('selected'); render(); document.querySelector(`[data-operation="${operation}"]`).focus({ preventScroll: true }); });
+      button.addEventListener('click', () => {
+        op = op === operation ? null : operation; say('selected');
+        if (combineSelection()) return;
+        render(); document.querySelector(`[data-operation="${operation}"]`).focus({ preventScroll: true });
+      });
       return button;
     }));
     [['slot-a', aId, 'first'], ['slot-b', bId, 'second']].forEach(([id, selected, label]) => {
@@ -70,11 +76,6 @@
     });
     $('slot-op').textContent = op ? E.symbols[op] : '?';
     $('slot-op').classList.toggle('active', !!op);
-    let result = '?';
-    const ready = aId !== null && bId !== null && op !== null;
-    if (ready) { try { result = E.format(E.calculate(tile(aId).value, op, tile(bId).value)); } catch { result = '—'; } }
-    $('preview').textContent = result;
-    $('combine').disabled = !ready || awarded;
     $('swap').disabled = aId === null || bId === null;
     $('clear-selection').disabled = aId === null && bId === null && op === null;
     $('selection-prompt').textContent = t(aId === null ? 'pickFirst' : op === null ? 'pickOperation' : bId === null ? 'pickSecond' : 'readyToCombine');
@@ -126,10 +127,10 @@
       $('confetti').append(bit); setTimeout(() => bit.remove(), 3200);
     }
   }
-  $('combine').addEventListener('click', () => {
-    if (aId === null || bId === null || !op || awarded) return;
+  function combineSelection() {
+    if (aId === null || bId === null || !op || awarded) return false;
     let next;
-    try { next = E.combine(state, aId, op, bId); } catch (error) { say(error.message === 'zero' ? 'zero' : 'range'); render(); return; }
+    try { next = E.combine(state, aId, op, bId); } catch (error) { say(error.message === 'zero' ? 'zero' : 'range'); render(); return true; }
     history.push(state); state = next; clearSelection();
     if (E.won(state)) { awarded = true; levelSolved = Math.min(E.PRACTICE_ROUNDS, levelSolved + 1); wins++; save('67-wins', wins); say('win'); celebrate(); }
     else if (!state.ops.length) say('miss', { n: E.format(state.tiles[0].value) });
@@ -137,7 +138,8 @@
     else say('afterMove', { n: E.format(state.tiles.at(-1).value) });
     render();
     (awarded ? $('next') : state.ops.length ? $('numbers').querySelector(`[data-tile-id="${state.nextId - 1}"]`) : $('undo')).focus();
-  });
+    return true;
+  }
   $('slot-a').addEventListener('click', () => { aId = null; render(); $('numbers').querySelector('button:not(:disabled)')?.focus({ preventScroll: true }); });
   $('slot-b').addEventListener('click', () => { bId = null; render(); $('numbers').querySelector('button:not(:disabled)')?.focus({ preventScroll: true }); });
   $('undo').addEventListener('click', () => { if (history.length && !awarded) { state = history.pop(); clearSelection(); say('ready'); render(); $('numbers').querySelector('button').focus({ preventScroll: true }); } });
@@ -152,7 +154,7 @@
   }
   $('next').addEventListener('click', () => nextRound());
   $('practice-level').addEventListener('click', () => nextRound(true));
-  $('swap').addEventListener('click', () => { [aId, bId] = [bId, aId]; say('selected'); render(); });
+  $('swap').addEventListener('click', () => { [aId, bId] = [bId, aId]; say('selected'); if (!combineSelection()) render(); });
   $('clear-selection').addEventListener('click', () => { clearSelection(); say('ready'); render(); $('numbers').querySelector('button').focus({ preventScroll: true }); });
   $('hint').addEventListener('click', () => {
     if (awarded) return;
