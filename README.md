@@ -1,6 +1,31 @@
 # MathPlayground
 Python implementation to play with math
 
+## Star polygon waves
+
+Open `web/star-polygon-waves/index.html` directly in a browser, or serve the
+repository with `python3 -m http.server 8000` and visit
+<http://127.0.0.1:8000/web/star-polygon-waves/>. No dependencies or build step
+are required.
+
+Inspired by the supplied matharium tweet screenshot, this experiment animates
+five star polygons ({7/5}, {9/4}, {20/13}, {25/12}, and {29/17}) alongside their
+piecewise-linear height traces. Each dot moves at constant speed along its
+polygon's edges; each graph shows two circuits of history, present at the left.
+Pause, restart, change speed, or scrub the circuit position. Toggle guide circles,
+sample points, and the {25/12} aliasing envelope. Reduced-motion preferences
+start playback paused.
+
+The custom explorer accepts 3–80 vertices and a step from 1 to n−1. For
+non-coprime pairs, it draws every component and follows one closed path,
+explaining its shorter period. Invalid input keeps the last valid drawing.
+
+Run the geometry and sampling checks with:
+
+```bash
+node --test web/star-polygon-waves/math.test.js
+```
+
 ## Prime colors
 
 Open `web/prime-colors/index.html` directly in a browser. This offline HTML/CSS/JS

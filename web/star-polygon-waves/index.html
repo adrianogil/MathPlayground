@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Watch star polygons turn into waves. An interactive exploration of sampling, geometry, and aliasing.">
+  <title>Star Polygon Waves · MathPlayground</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="math.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+<main>
+  <header>
+    <div class="masthead"><span class="brand"><span aria-hidden="true">✳</span> MathPlayground</span><span class="edition">GEOMETRY / SIGNALS · 01</span></div>
+    <div class="intro"><div><p class="eyebrow">A little geometry. A hidden rhythm.</p><h1>Stars become <em>waves.</em></h1></div><p class="lede">Follow a point around a star. Trace its height.<br>Watch a simple path reveal an unexpected beat.</p></div>
+  </header>
+
+  <section class="instrument" aria-label="Animated star polygons and their height traces">
+    <div class="toolbar">
+      <div class="transport"><button id="play" type="button" aria-label="Pause animation">Ⅱ <span>Pause</span></button><button id="restart" class="quiet" type="button">↺ <span>Restart</span></button><span class="live"><i id="status-dot"></i><span id="status">In motion</span></span></div>
+      <label class="speed" for="speed">Speed <select id="speed" aria-label="Speed"><option value="0.25">0.25×</option><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="2">2×</option></select></label>
+    </div>
+    <div class="chart-head"><span>THE PATH <span aria-hidden="true">↻</span></span><span>ITS HEIGHT OVER TIME <span class="history">← recent · earlier →</span></span></div>
+    <div id="examples"></div>
+    <div class="timeline"><label for="phase">Circuit position</label><input id="phase" type="range" min="0" max="1000" step="1" value="0"><output id="phase-value" for="phase">0%</output></div>
+    <div class="view-options"><label><input id="circles" type="checkbox"> Guide circles</label><label><input id="samples" type="checkbox"> Sample points</label><label><input id="envelope" type="checkbox" checked> 25-point envelope</label><span>One circuit = one closed path · 12 s at 1×</span></div>
+  </section>
+
+  <section class="explanation" aria-labelledby="explanation-title">
+    <div><p class="eyebrow">Reading the rhythm</p><h2 id="explanation-title">A sine wave,<br>hidden in a star.</h2></div>
+    <div class="explanation-copy"><p>A star polygon <strong>{n/k}</strong> joins <strong>n</strong> equally spaced points on a circle, skipping ahead <strong>k</strong> positions each time. The moving dot travels each straight edge at constant speed. Its height is a straight-line blend between consecutive samples of a sine wave.</p><p>For <strong>{25/12}</strong>, the step is just under half a turn. Heights alternate rapidly while their magnitude follows a slow envelope. This is <strong>aliasing</strong>: discrete samples can disguise the rhythm beneath them, much like a filmed wheel appearing to turn backwards.</p><div class="formula">y<sub>j</sub> = sin(2πjk/n)<span>For {25/12}: y<sub>j</sub> = (−1)<sup>j+1</sup> sin(πj/25)</span></div><p class="caption">The dashed envelope marks ±|sin(πu/25)| at continuous edge position u; the 25-point trace touches it at vertices. Each row shows two circuits of history, with the present at the left.</p></div>
+  </section>
+
+  <details class="custom" id="custom-panel">
+    <summary><span><span class="eyebrow">Your turn</span><strong>Make a different kind of star</strong></span><span class="expand" aria-hidden="true">＋</span></summary>
+    <div class="custom-content"><div class="custom-controls"><label>Points <b>n</b><input id="custom-n" type="number" min="3" max="80" step="1" value="11"></label><label>Step <b>k</b><input id="custom-k" type="number" min="1" max="10" step="1" value="5"></label><button type="button" id="apply">Draw polygon <span aria-hidden="true">↗</span></button></div><p id="custom-info" aria-live="polite"></p><div id="custom-chart"></div></div>
+  </details>
+  <footer><span>MathPlayground <span aria-hidden="true">✳</span></span><p>Inspired by the matharium animation in the supplied tweet screenshot.</p><span>Explore slowly. Notice more.</span></footer>
+  <noscript>Enable JavaScript to animate the polygons and explore their height traces.</noscript>
+</main>
+</body>
+</html>
