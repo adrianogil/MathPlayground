@@ -54,7 +54,10 @@ it. Each new page session starts at level 1, independently of saved stars.
 The workspace keeps all remaining number and operation tiles together. Select
 two number tiles and an operation: the calculation happens immediately when
 the third choice completes the selection, in any selection order. There is no
-confirmation button. Use Undo to reverse a move. Selecting a third number
+confirmation button. The selected tiles pulse and merge into the retained slot
+in about half a second, followed by a brief result highlight. Controls pause
+during the merge to prevent duplicate moves. Reduced-motion settings skip the
+movement and show the result immediately. Use Undo to reverse a move. Selecting a third number
 never silently replaces the second; swap and clear-selection controls make
 changes explicit. The result becomes
 a highlighted result tile in the leftmost selected slot; the selected operation
@@ -89,7 +92,7 @@ status announcements, touch screens, and reduced-motion preferences.
 Run arithmetic, generator, solver, and translation checks with:
 
 ```bash
-node --test web/67/engine.test.js
+node --test web/67/*.test.js
 ```
 
 ## Star polygon waves

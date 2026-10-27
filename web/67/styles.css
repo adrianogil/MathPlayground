@@ -412,7 +412,7 @@ h2,h3,p {
   box-shadow:0 3px 0 #433172;
 }
 
-.operation:disabled {
+.operation[data-used="true"] {
   color:#9c988e;
   background:#f3f1eb;
   border-style:dashed;
@@ -420,7 +420,7 @@ h2,h3,p {
   position:relative;
 }
 
-.operation:disabled:after {
+.operation[data-used="true"]:after {
   content:'✓';
   position:absolute;
   right:3px;
@@ -1309,4 +1309,18 @@ footer>span:last-child {
   .workbench .number-tile, .consumed-tile { height: 88px; min-height: 88px; padding: 10px 4px; border-radius: 12px; }
   .workbench .tile-origin, .consumed-tile small { font-size: 9px; }
   .composer { padding: 12px 0 0; }
+}
+
+/* Both operands converge on the retained slot without moving the grid itself. */
+.number-tray.is-merging { isolation: isolate; }
+.number-tray.is-merging .number-tile { transition: none; transform: none; }
+.number-tray.is-merging .merge-source { z-index: 2; box-shadow: 0 0 0 3px #b9a7dc; }
+.workbench .number-tile.merge-reveal { animation: merge-reveal 380ms ease-out; }
+@keyframes merge-reveal {
+  0% { transform: scale(.82); box-shadow: 0 0 0 7px #cabce9; }
+  60% { transform: scale(1.06); box-shadow: 0 0 0 5px #acd6bf; }
+  100% { transform: scale(1); box-shadow: 0 0 0 3px #8bbda8; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .workbench .number-tile.merge-reveal { animation: none; }
 }

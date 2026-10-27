@@ -9,6 +9,7 @@
   let wins = Math.max(0, Math.min(99999, Number.parseInt(read('67-wins'), 10) || 0));
   let round = 1, level = 1, levelSolved = 0, initial = { numbers: [40, 27], ops: ['+'], level: 1 };
   let state = E.createState(initial.numbers, initial.ops), history = [];
+  let merging = false;
   let aId = null, bId = null, op = null, awarded = false, notice = { key: 'ready', vars: {} };
   const t = (key, vars = {}) => messages[language][key].replace(/\{(\w+)\}/g, (_, name) => vars[name] ?? '');
   const opKeys = { '+': 'opAdd', '-': 'opSubtract', '*': 'opMultiply', '/': 'opDivide' };
@@ -16,7 +17,7 @@
   function clearSelection() { aId = bId = op = null; }
   function tile(id) { return state.tiles.find(piece => piece.id === id); }
   function pick(id) {
-    if (awarded || !state.ops.length) return;
+    if (merging || awarded || !state.ops.length) return;
     if (aId === id) aId = null;
     else if (bId === id) bId = null;
     else if (aId === null) aId = id;
@@ -68,10 +69,12 @@
     $('operations').replaceChildren(...initial.ops.map(operation => {
       const button = document.createElement('button'); button.type = 'button'; button.className = 'operation';
       button.textContent = E.symbols[operation]; button.dataset.operation = operation;
+      button.dataset.used = String(!state.ops.includes(operation));
       button.disabled = !state.ops.includes(operation) || awarded;
       button.setAttribute('aria-pressed', String(op === operation));
       button.setAttribute('aria-label', t(opKeys[operation]) + (button.disabled ? ` (${t('used')})` : ''));
       button.addEventListener('click', () => {
+        if (merging) return;
         op = op === operation ? null : operation; say('selected');
         if (combineSelection()) return;
         render(); document.querySelector(`[data-operation="${operation}"]`).focus({ preventScroll: true });
@@ -131,21 +134,53 @@
     }
   }
   function combineSelection() {
+    if (merging) return true;
     if (aId === null || bId === null || !op || awarded) return false;
     let next;
     try { next = E.combine(state, aId, op, bId); } catch (error) { say(error.message === 'zero' ? 'zero' : 'range'); render(); return true; }
+    const firstId = aId, secondId = bId;
+    const destinationId = tile(aId).slot < tile(bId).slot ? aId : bId;
+    void finishMerge(next, firstId, secondId, destinationId);
+    return true;
+  }
+  async function finishMerge(next, firstId, secondId, destinationId) {
+    merging = true; say('combining'); render();
+    const board = $('numbers');
+    board.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'instant' });
+    board.setAttribute('aria-busy', 'true');
+    const controls = [...document.querySelectorAll('button, select')].map(element => ({ element, disabled: element.disabled }));
+    controls.forEach(({ element }) => { element.disabled = true; });
+    const findTile = id => board.querySelector(`[data-tile-id="${id}"]`);
+    const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    try {
+      await window.SixtySevenMotion.animateMerge(board, findTile(firstId), findTile(secondId), findTile(destinationId), { reducedMotion });
+    } catch {
+      // A cosmetic failure must not lose a valid calculation or lock the board.
+    } finally {
+      controls.forEach(({ element, disabled }) => { element.disabled = disabled; });
+      board.removeAttribute('aria-busy');
+      merging = false;
+    }
+    commitMove(next, reducedMotion);
+  }
+  function commitMove(next, reducedMotion) {
     history.push(state); state = next; clearSelection();
     if (E.won(state)) { awarded = true; levelSolved = Math.min(E.PRACTICE_ROUNDS, levelSolved + 1); wins++; save('67-wins', wins); say('win'); celebrate(); }
     else if (!state.ops.length) say('miss', { n: E.format(state.tiles[0].value) });
     else if (state.tiles.some(piece => piece.value.n === 67 * piece.value.d)) say('early');
     else say('afterMove', { n: E.format(state.tiles.at(-1).value) });
     render();
-    (awarded ? $('next') : state.ops.length ? $('numbers').querySelector(`[data-tile-id="${state.nextId - 1}"]`) : $('undo')).focus();
-    return true;
+    const result = $('numbers').querySelector(`[data-tile-id="${state.nextId - 1}"]`);
+    if (!reducedMotion) {
+      result.classList.add('merge-reveal');
+      setTimeout(() => result.classList.remove('merge-reveal'), 420);
+    }
+    (awarded ? $('next') : state.ops.length ? result : $('undo')).focus({ preventScroll: true });
   }
-  $('undo').addEventListener('click', () => { if (history.length && !awarded) { state = history.pop(); clearSelection(); say('ready'); render(); $('numbers').querySelector('button').focus({ preventScroll: true }); } });
-  $('restart').addEventListener('click', () => { if (awarded) return; state = E.createState(initial.numbers, initial.ops); history = []; clearSelection(); say('ready'); render(); $('numbers').querySelector('button').focus({ preventScroll: true }); });
+  $('undo').addEventListener('click', () => { if (!merging && history.length && !awarded) { state = history.pop(); clearSelection(); say('ready'); render(); $('numbers').querySelector('button').focus({ preventScroll: true }); } });
+  $('restart').addEventListener('click', () => { if (awarded || merging) return; state = E.createState(initial.numbers, initial.ops); history = []; clearSelection(); say('ready'); render(); $('numbers').querySelector('button').focus({ preventScroll: true }); });
   function nextRound(stay = false) {
+    if (merging) return;
     const nextLevel = stay ? level : E.levelAfter(level, levelSolved);
     if (nextLevel !== level || stay) levelSolved = 0;
     level = nextLevel;
@@ -155,15 +190,15 @@
   }
   $('next').addEventListener('click', () => nextRound());
   $('practice-level').addEventListener('click', () => nextRound(true));
-  $('swap').addEventListener('click', () => { [aId, bId] = [bId, aId]; say('selected'); if (!combineSelection()) render(); });
-  $('clear-selection').addEventListener('click', () => { clearSelection(); say('ready'); render(); $('numbers').querySelector('button').focus({ preventScroll: true }); });
+  $('swap').addEventListener('click', () => { if (merging) return; [aId, bId] = [bId, aId]; say('selected'); if (!combineSelection()) render(); });
+  $('clear-selection').addEventListener('click', () => { if (merging) return; clearSelection(); say('ready'); render(); $('numbers').querySelector('button').focus({ preventScroll: true }); });
   $('hint').addEventListener('click', () => {
-    if (awarded) return;
+    if (awarded || merging) return;
     const solution = E.solve(state);
     if (solution?.length) { const step = solution[0]; say('hintMove', { equation: equation(step) }); }
     else say('noSolution');
     render();
   });
-  $('language').addEventListener('change', event => { language = event.target.value; save('67-language', language); render(); });
+  $('language').addEventListener('change', event => { if (merging) return; language = event.target.value; save('67-language', language); render(); });
   render();
 })();
