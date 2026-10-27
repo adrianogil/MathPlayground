@@ -1,12 +1,14 @@
 "use strict";
 
-// Each prime has a fixed, unique color; repeated factors repeat their bands.
+// Fixed colors spaced across OKLab hue, lightness, and saturation so distinct
+// primes do not merely get near-identical pastel hex values. Repeated factors
+// repeat their bands. The first seven familiar colors stay unchanged.
 const palette = [
   "#8fb8ec", "#f1a38e", "#e6c563", "#a8c88d", "#b6a0da",
-  "#79c7c8", "#e69dbb", "#cfac7d", "#91a7c6", "#c3c46c",
-  "#d58a8a", "#80b6a2", "#ad9fce", "#e7af70", "#91bfd5",
-  "#cd9fb9", "#a9b77b", "#dca28f", "#83b8bc", "#c2a45f",
-  "#9aa2db", "#c19476", "#97bba5", "#c9a6d1", "#b7ba8d"
+  "#79c7c8", "#e69dbb", "#005500", "#5500bb", "#bb0011",
+  "#0077aa", "#bb33bb", "#339900", "#663355", "#aa7733",
+  "#ff3377", "#7766ff", "#88ee22", "#ff66ee", "#004488",
+  "#995577", "#ff6600", "#559988", "#775500", "#0099ff"
 ];
 
 function primeFactors(number) {
