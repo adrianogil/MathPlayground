@@ -1,37 +1,49 @@
 <!doctype html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Explore the prime factors of every number from 1 to 100 through color.">
-  <title>Prime colors · MathPlayground</title>
+  <meta name="description" content="Explore os fatores primos dos números de 1 a 100 por meio das cores.">
+  <title>Cores dos primos · MathPlayground</title>
   <link rel="stylesheet" href="styles.css">
+  <script src="i18n.js" defer></script>
   <script src="app.js" defer></script>
 </head>
 <body>
   <main>
     <header class="hero">
-      <div class="brand"><span class="brand-mark" aria-hidden="true">✳</span> MathPlayground <span class="divider">/</span> Number explorations</div>
-      <p class="eyebrow">A little color. A little number theory.</p>
-      <h1>Every number has<br>a <em>prime palette.</em></h1>
-      <p class="intro">Primes are the building blocks. Give each one a color,<br class="desktop-break"> and watch the numbers from 1 to 100 come together.</p>
+      <div class="top-bar">
+        <div class="brand"><span class="brand-mark" aria-hidden="true">✳</span> MathPlayground <span class="divider">/</span> <span data-i18n="brand">Explorando os números</span></div>
+        <label class="language-picker" for="language"><span data-i18n="language">Idioma</span>
+          <select id="language">
+            <option value="pt-BR" lang="pt-BR" selected>Português (Brasil)</option>
+            <option value="en" lang="en">English</option>
+            <option value="fr" lang="fr">Français</option>
+            <option value="ja" lang="ja">日本語</option>
+            <option value="ko" lang="ko">한국어</option>
+          </select>
+        </label>
+      </div>
+      <p class="eyebrow" data-i18n="eyebrow">Um pouco de cor. Um pouco de teoria dos números.</p>
+      <h1><span data-i18n="heroStart">Todo número tem</span><br><em data-i18n="heroEm">uma paleta de primos.</em></h1>
+      <p class="intro" data-i18n="intro">Os primos são os blocos de construção. Dê uma cor a cada um e veja como os números de 1 a 100 se formam.</p>
     </header>
 
     <div class="workspace">
       <section class="board" aria-labelledby="grid-title">
         <div class="section-heading">
-          <h2 id="grid-title">The number garden</h2>
+          <h2 id="grid-title" data-i18n="gridTitle">O jardim dos números</h2>
           <span class="range">01 — 100</span>
         </div>
-        <p class="board-hint">Pick a prime to highlight its multiples, or a composite to find its prime factors.</p>
-        <div id="number-grid" class="number-grid" aria-label="Numbers 1 to 100"></div>
-        <div class="board-footer"><span><i class="prime-marker" aria-hidden="true"></i> A dot marks a prime</span><span>One band per prime factor</span></div>
-        <p id="filter-status" class="filter-status" role="status">Showing all 100 numbers</p>
+        <p class="board-hint" data-i18n="gridHint">Escolha um primo para destacar seus múltiplos ou um composto para encontrar seus fatores primos.</p>
+        <div id="number-grid" class="number-grid" aria-label="Números de 1 a 100"></div>
+        <div class="board-footer"><span><i class="prime-marker" aria-hidden="true"></i> <span data-i18n="primeDot">Um ponto indica um primo</span></span><span data-i18n="bandsHint">Uma faixa por fator primo</span></div>
+        <p id="filter-status" class="filter-status" role="status">Mostrando todos os 100 números</p>
       </section>
 
       <aside class="sidebar">
         <section class="inspector" aria-labelledby="detail-heading">
-          <p class="eyebrow" id="detail-heading">Under the colors</p>
+          <p class="eyebrow" id="detail-heading" data-i18n="detailHeading">Por trás das cores</p>
           <div class="detail-top"><div id="selected-tile" class="selected-tile" aria-hidden="true"></div><span id="number-kind" class="kind"></span></div>
           <div id="number-detail" aria-live="polite" aria-atomic="true">
             <h2 id="equation"></h2>
@@ -41,16 +53,16 @@
         </section>
 
         <section class="legend" aria-labelledby="legend-heading">
-          <div class="section-heading"><h2 id="legend-heading">The prime palette</h2><span class="count">25</span></div>
-          <p>Choose a prime to find its multiples.</p>
+          <div class="section-heading"><h2 id="legend-heading" data-i18n="legendHeading">A paleta dos primos</h2><span class="count">25</span></div>
+          <p data-i18n="legendHint">Escolha um primo para encontrar seus múltiplos.</p>
           <div id="prime-legend" class="prime-legend"></div>
-          <button id="clear-filter" class="clear-filter" type="button" disabled>Show all numbers <span aria-hidden="true">↗</span></button>
+          <button id="clear-filter" class="clear-filter" type="button" disabled><span data-i18n="clear">Mostrar todos os números</span><span aria-hidden="true">↗</span></button>
         </section>
       </aside>
     </div>
 
-    <footer class="page-footer"><span>Small factors. Endless patterns.</span><p><strong>What about 1?</strong> It’s neither prime nor composite, so it has no prime colors.</p></footer>
-    <noscript>This interactive grid needs JavaScript enabled to display the numbers and their prime factors.</noscript>
+    <footer class="page-footer"><span data-i18n="footer">Pequenos fatores. Infinitos padrões.</span><p><strong data-i18n="oneQuestion">E o número 1?</strong> <span data-i18n="oneFooter">Ele não é primo nem composto, por isso não tem cores de fatores primos.</span></p></footer>
+    <noscript>Esta grade interativa precisa do JavaScript ativado para mostrar os números e seus fatores primos.</noscript>
   </main>
 </body>
 </html>

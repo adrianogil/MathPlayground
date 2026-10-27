@@ -2,7 +2,10 @@
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--paper); color: var(--ink); font-family: "Avenir Next", Avenir, "Segoe UI", sans-serif; }
 button { font: inherit; color: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent; }
-button:focus-visible { outline: 3px solid #234e45; outline-offset: 4px; }
+button:focus-visible, select:focus-visible { outline: 3px solid #234e45; outline-offset: 4px; }
+.top-bar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+.language-picker { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); }
+.language-picker select { font: inherit; color: var(--ink); background: #ffffffa6; border: 1px solid var(--line); border-radius: 9px; padding: 9px 10px; max-width: 100%; cursor: pointer; }
 main { max-width: 1200px; margin: auto; padding: 32px 40px 24px; }
 .brand { display: flex; align-items: center; gap: 12px; font-size: 12px; font-weight: 600; letter-spacing: .04em; }
 .brand-mark { font-size: 28px; color: #568773; }
@@ -61,6 +64,8 @@ h2 { margin: 0; font-size: 16px; font-weight: 600; letter-spacing: -.025em; }
 .page-footer { display: flex; justify-content: space-between; gap: 30px; border-top: 1px solid var(--line); margin-top: 32px; padding-top: 20px; font-size: 10px; color: var(--muted); }
 .page-footer > span { font-family: Georgia, serif; font-style: italic; font-size: 13px; }
 .page-footer p { margin: 0; line-height: 1.6; }
+@media (min-width: 1000px) { h1 { max-width: calc(100% - 320px); } }
+:lang(ja) h1, :lang(ko) h1 { line-height: 1.25; letter-spacing: -.025em; }
 @media (min-width: 1000px) { .hero { position: relative; } .intro { position: absolute; right: 0; bottom: 42px; width: 286px; } .desktop-break { display: none; } }
 @media (max-width: 900px) { main { padding: 24px; } .workspace { grid-template-columns: minmax(0, 1fr); } .sidebar { grid-template-columns: 1fr 1fr; gap: 26px; } .board { padding: 22px; } .number-tile { border-radius: 10px; } }
 @media (max-width: 520px) { main { padding: 18px 12px; } .brand { font-size: 10px; gap: 7px; } .hero { padding: 0 10px 28px; } .hero > .eyebrow { font-size: 8px; margin-top: 28px; } h1 { font-size: 42px; } .intro { font-size: 13px; } .desktop-break { display: none; } .board { padding: 16px 10px; border-radius: 17px; } .section-heading, .board-hint { padding: 0 4px; } .number-grid { gap: 5px; } .number-tile { border-radius: 7px; } .number-label { font-size: 11px; min-width: 21px; height: 21px; padding: 0 2px; border-radius: 5px; } .number-tile.is-prime::after { bottom: 2px; width: 3px; height: 3px; } .board-footer { font-size: 9px; } .sidebar { grid-template-columns: 1fr; gap: 22px; } .legend { padding: 0 10px; } .prime-key { min-height: 42px; } .page-footer { flex-direction: column; gap: 12px; margin-top: 24px; padding: 20px 10px 0; } }

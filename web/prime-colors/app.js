@@ -51,13 +51,19 @@ function addBands(element, number) {
 }
 
 function describe(number) {
-  if (number.value === 1) return "1, neither prime nor composite; no prime factors";
-  if (number.factors.length === 1) return `${number.value}, prime`;
+  if (number.value === 1) return t("oneLabel");
+  if (number.factors.length === 1) return t("primeLabel", { value: number.value });
   return `${number.value} = ${number.factors.join(" × ")}`;
 }
 
-function selectNumber(value, highlight = true) {
-  selectedNumber = highlight && selectedNumber === value ? null : value;
+function selectNumber(value) {
+  selectedNumber = selectedNumber === value ? null : value;
+  renderSelection();
+  highlightRelated(selectedNumber);
+}
+
+function renderSelection() {
+  const value = selectedNumber;
   for (const button of grid.children) {
     button.setAttribute("aria-pressed", String(Number(button.dataset.number) === selectedNumber));
   }
@@ -67,17 +73,16 @@ function selectNumber(value, highlight = true) {
   chips.replaceChildren();
   if (selectedNumber === null) {
     preview.textContent = "—";
-    document.querySelector("#number-kind").textContent = "No selection";
-    document.querySelector("#equation").textContent = "Pick a number";
-    document.querySelector("#explanation").textContent = "Select a prime to see its multiples, or a composite to see its prime factors. Click the selected number again to deselect it.";
-    highlightRelated(null);
+    document.querySelector("#number-kind").textContent = t("noSelection");
+    document.querySelector("#equation").textContent = t("pick");
+    document.querySelector("#explanation").textContent = t("pickExplanation");
     return;
   }
   const number = numbers[value - 1];
   const isPrime = number.factors.length === 1;
   addBands(preview, number);
-  document.querySelector("#number-kind").textContent = value === 1 ? "The unit" : isPrime ? "Prime number" : "Composite";
-  document.querySelector("#equation").textContent = value === 1 ? "1 has no prime factors" : isPrime ? `${value} is prime` : `${value} = ${number.factors.join(" × ")}`;
+  document.querySelector("#number-kind").textContent = t(value === 1 ? "unit" : isPrime ? "prime" : "composite");
+  document.querySelector("#equation").textContent = value === 1 ? t("oneEquation") : isPrime ? t("primeEquation", { value }) : `${value} = ${number.factors.join(" × ")}`;
   for (const factor of [...new Set(number.factors)]) {
     const chip = document.createElement("span");
     chip.className = "factor-chip";
@@ -85,15 +90,17 @@ function selectNumber(value, highlight = true) {
     swatch.className = "swatch";
     swatch.style.setProperty("--color", colors.get(factor));
     const count = number.factors.filter(item => item === factor).length;
-    chip.append(swatch, `${factor}${count > 1 ? ` × ${count} bands` : " · 1 band"}`);
+    chip.append(swatch, t(count === 1 ? "bandOne" : "bandMany", { factor, count }));
     chips.append(chip);
   }
   document.querySelector("#explanation").textContent = value === 1
-    ? "Every prime factorization starts with primes. The number 1 has none, so its square stays neutral."
+    ? t("oneExplanation")
     : isPrime
-      ? `Only 1 and ${value} divide ${value} exactly. It gets one color, which appears in every multiple of ${value}.`
-      : `${number.factors.length} prime factors, ${new Set(number.factors).size} ${new Set(number.factors).size === 1 ? "color" : "colors"}. Each band is one factor; repeated primes repeat the same color. Multiply the factors to get ${value}.`;
-  if (highlight) highlightRelated(value);
+      ? t("primeExplanation", { value })
+      : t("compositeExplanation", {
+        value, count: number.factors.length,
+        colors: t(new Set(number.factors).size === 1 ? "colorOne" : "colorMany", { count: new Set(number.factors).size })
+      });
 }
 
 function highlightRelated(value) {
@@ -116,10 +123,10 @@ function highlightRelated(value) {
   }
   document.querySelector("#clear-filter").disabled = number === null;
   document.querySelector("#filter-status").textContent = number === null
-    ? "Showing all 100 numbers"
+    ? t("showAll")
     : isPrime
-      ? `Highlighting ${Math.floor(100 / value)} multiples of ${value}`
-      : `Prime factors of ${value}: ${[...factors].join(", ")} · the selected number stays visible`;
+      ? t(Math.floor(100 / value) === 1 ? "multiplesOne" : "multiplesMany", { value, count: Math.floor(100 / value) })
+      : t("factorsStatus", { value, factors: [...factors].join(", ") });
 }
 
 function filterPrime(prime) {
@@ -152,7 +159,7 @@ for (const prime of primes) {
   button.className = "prime-key";
   button.dataset.prime = prime;
   button.setAttribute("aria-pressed", "false");
-  button.setAttribute("aria-label", `Highlight multiples of ${prime}`);
+  button.setAttribute("aria-label", t("highlightPrime", { value: prime }));
   const swatch = document.createElement("span");
   swatch.className = "swatch";
   swatch.style.setProperty("--color", colors.get(prime));
@@ -162,4 +169,29 @@ for (const prime of primes) {
 }
 
 document.querySelector("#clear-filter").addEventListener("click", () => highlightRelated(null));
-selectNumber(selectedNumber, false);
+
+function setLanguage(locale) {
+  language = Object.hasOwn(translations, locale) ? locale : "pt-BR";
+  document.documentElement.lang = language;
+  document.title = t("title");
+  document.querySelector('meta[name="description"]').content = t("description");
+  document.querySelector("#language").value = language;
+  for (const element of document.querySelectorAll("[data-i18n]")) {
+    element.textContent = t(element.dataset.i18n);
+  }
+  grid.setAttribute("aria-label", t("gridLabel"));
+  for (const button of grid.children) {
+    const label = describe(numbers[Number(button.dataset.number) - 1]);
+    button.setAttribute("aria-label", label);
+    button.title = label;
+  }
+  for (const button of legend.children) {
+    button.setAttribute("aria-label", t("highlightPrime", { value: button.dataset.prime }));
+  }
+  // Translate the current view without toggling its selection or highlights.
+  renderSelection();
+  highlightRelated(highlightedNumber);
+}
+
+document.querySelector("#language").addEventListener("change", event => setLanguage(event.target.value));
+setLanguage("pt-BR");

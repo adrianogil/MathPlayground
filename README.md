@@ -8,6 +8,10 @@ exploration displays 1–100 in a rounded-square grid, with a unique color for e
 prime and one colored band per prime factor (including repeated factors) for
 composites. The number 1 is neutral because it has no prime factors.
 
+The page starts in Brazilian Portuguese. The language selector at the top also
+offers English, French, Japanese, and Korean, including translated explanations
+and accessibility labels. Switching languages preserves selections and highlights.
+
 Select a prime in the grid to highlight all its multiples. Select a composite
 to highlight its distinct prime factors in the grid and palette, while keeping
 the selected composite visible. Selecting 1 or “Show all numbers” clears the
