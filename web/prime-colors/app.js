@@ -30,6 +30,8 @@ const numbers = Array.from({ length: 100 }, (_, index) => {
 const primes = numbers.filter(number => number.factors.length === 1).map(number => number.value);
 const colors = new Map(primes.map((prime, index) => [prime, palette[index]]));
 const grid = document.querySelector("#number-grid");
+const primeGrid = document.querySelector("#prime-grid");
+const numberGrids = [grid, primeGrid];
 const legend = document.querySelector("#prime-legend");
 let selectedNumber = 60;
 let highlightedNumber = null;
@@ -64,7 +66,7 @@ function selectNumber(value) {
 
 function renderSelection() {
   const value = selectedNumber;
-  for (const button of grid.children) {
+  for (const button of numberGrids.flatMap(container => Array.from(container.children))) {
     button.setAttribute("aria-pressed", String(Number(button.dataset.number) === selectedNumber));
   }
   const preview = document.querySelector("#selected-tile");
@@ -109,7 +111,7 @@ function highlightRelated(value) {
   const number = highlightedNumber === null ? null : numbers[highlightedNumber - 1];
   const isPrime = number?.factors.length === 1;
   const factors = new Set(number?.factors ?? []);
-  for (const button of grid.children) {
+  for (const button of numberGrids.flatMap(container => Array.from(container.children))) {
     const candidate = Number(button.dataset.number);
     const related = number !== null && (isPrime ? candidate % value === 0 : factors.has(candidate));
     const selectedComposite = number !== null && !isPrime && candidate === value;
@@ -133,25 +135,30 @@ function filterPrime(prime) {
   highlightRelated(highlightedNumber === prime ? null : prime);
 }
 
-for (const number of numbers) {
-  const button = document.createElement("button");
-  button.type = "button";
-  button.className = `number-tile${number.factors.length === 1 ? " is-prime" : ""}`;
-  button.dataset.number = number.value;
-  button.setAttribute("aria-label", describe(number));
-  button.title = describe(number);
-  addBands(button, number);
-  button.addEventListener("click", () => selectNumber(number.value));
-  // Arrow keys follow the visible ten-column layout; Tab also reaches every tile.
-  button.addEventListener("keydown", event => {
-    const offset = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -10, ArrowDown: 10 }[event.key];
-    if (offset === undefined) return;
-    event.preventDefault();
-    const target = Math.max(1, Math.min(100, number.value + offset));
-    grid.children[target - 1].focus();
+function populateGrid(container, entries) {
+  entries.forEach((number, index) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = `number-tile${number.factors.length === 1 ? " is-prime" : ""}`;
+    button.dataset.number = number.value;
+    button.setAttribute("aria-label", describe(number));
+    button.title = describe(number);
+    addBands(button, number);
+    button.addEventListener("click", () => selectNumber(number.value));
+    // Arrow keys follow the visible ten-column layout; Tab also reaches every tile.
+    button.addEventListener("keydown", event => {
+      const offset = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -10, ArrowDown: 10 }[event.key];
+      if (offset === undefined) return;
+      event.preventDefault();
+      const target = Math.max(0, Math.min(entries.length - 1, index + offset));
+      container.children[target].focus();
+    });
+    container.append(button);
   });
-  grid.append(button);
 }
+
+populateGrid(grid, numbers);
+populateGrid(primeGrid, numbers.filter(number => number.factors.length === 1));
 
 for (const prime of primes) {
   const button = document.createElement("button");
@@ -180,7 +187,7 @@ function setLanguage(locale) {
     element.textContent = t(element.dataset.i18n);
   }
   grid.setAttribute("aria-label", t("gridLabel"));
-  for (const button of grid.children) {
+  for (const button of numberGrids.flatMap(container => Array.from(container.children))) {
     const label = describe(numbers[Number(button.dataset.number) - 1]);
     button.setAttribute("aria-label", label);
     button.title = label;

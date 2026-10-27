@@ -39,6 +39,14 @@
         <div id="number-grid" class="number-grid" aria-label="Números de 1 a 100"></div>
         <div class="board-footer"><span><i class="prime-marker" aria-hidden="true"></i> <span data-i18n="primeDot">Um ponto indica um primo</span></span><span data-i18n="bandsHint">Uma faixa por fator primo</span></div>
         <p id="filter-status" class="filter-status" role="status">Mostrando todos os 100 números</p>
+        <section class="prime-board" aria-labelledby="prime-grid-title">
+          <div class="section-heading">
+            <h2 id="prime-grid-title" data-i18n="primeGridTitle">Apenas os primos</h2>
+            <span class="count">25</span>
+          </div>
+          <p class="board-hint" data-i18n="primeGridHint">Clique em um primo para destacar seus múltiplos na grade acima. Clique novamente para desmarcar.</p>
+          <div id="prime-grid" class="number-grid" aria-labelledby="prime-grid-title"></div>
+        </section>
       </section>
 
       <aside class="sidebar">

@@ -17,6 +17,9 @@ to highlight its distinct prime factors in the grid and palette, while keeping
 the selected composite visible. Selecting 1 or “Show all numbers” clears the
 highlights. The palette also toggles highlights for a prime's multiples.
 Click the selected grid number again to deselect it and clear its highlights.
+A second grid below contains only the 25 primes. It shares selection and
+highlighting with the main grid, including highlighting a composite's prime
+factors and deselecting a prime from either grid.
 Every grid selection shows its factorization. Arrow keys move through the ten-column grid; Enter or
 Space selects the focused number. No dependencies or build step are required.
 
