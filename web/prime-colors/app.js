@@ -2,13 +2,25 @@
 
 // Fixed colors spaced across OKLab hue, lightness, and saturation so distinct
 // primes do not merely get near-identical pastel hex values. Repeated factors
-// repeat their bands. The first seven familiar colors stay unchanged.
+// repeat their bands. The first 25 colors match the original 1–100 page;
+// the additional 53 colors extend the palette to the primes through 400.
 const palette = [
   "#8fb8ec", "#f1a38e", "#e6c563", "#a8c88d", "#b6a0da",
   "#79c7c8", "#e69dbb", "#005500", "#5500bb", "#bb0011",
   "#0077aa", "#bb33bb", "#339900", "#663355", "#aa7733",
   "#ff3377", "#7766ff", "#88ee22", "#ff66ee", "#004488",
-  "#995577", "#ff6600", "#559988", "#775500", "#0099ff"
+  "#995577", "#ff6600", "#559988", "#775500", "#0099ff",
+  "#00ffdd", "#00cc66", "#eeccff", "#880099", "#117755",
+  "#0044dd", "#553300", "#bb77ff", "#99aa00", "#8877bb",
+  "#550077", "#aa0066", "#0000bb", "#cc7788", "#880000",
+  "#dd9900", "#6655aa", "#ee1100", "#115555", "#8833dd",
+  "#bbee99", "#ee99ff", "#cc4488", "#00aacc", "#99ddff",
+  "#bb9977", "#ffccbb", "#777700", "#22bb99", "#dd66bb",
+  "#1166ff", "#aacc22", "#bb5544", "#ffdd00", "#44ddaa",
+  "#ff7788", "#00ff99", "#8899ff", "#663388", "#00ccff",
+  "#770066", "#332288", "#884444", "#dd44dd", "#007700",
+  "#88aa77", "#dd0055", "#9955aa", "#5544ee", "#445577",
+  "#aa55ee", "#4488cc", "#3366cc"
 ];
 
 function primeFactors(number) {
@@ -23,7 +35,7 @@ function primeFactors(number) {
   return factors;
 }
 
-const numbers = Array.from({ length: 100 }, (_, index) => {
+const numbers = Array.from({ length: maximum }, (_, index) => {
   const value = index + 1;
   return { value, factors: primeFactors(value) };
 });
@@ -129,7 +141,7 @@ function highlightRelated(value) {
     : value === 1
       ? t("allPrimes", { count: primes.length })
     : isPrime
-      ? t(Math.floor(100 / value) === 1 ? "multiplesOne" : "multiplesMany", { value, count: Math.floor(100 / value) })
+      ? t(Math.floor(maximum / value) === 1 ? "multiplesOne" : "multiplesMany", { value, count: Math.floor(maximum / value) })
       : t("factorsStatus", { value, factors: [...factors].join(", ") });
 }
 
@@ -147,9 +159,9 @@ function populateGrid(container, entries) {
     button.title = describe(number);
     addBands(button, number);
     button.addEventListener("click", () => selectNumber(number.value));
-    // Arrow keys follow the visible ten-column layout; Tab also reaches every tile.
+    // Arrow keys follow the visible column count; Tab also reaches every tile.
     button.addEventListener("keydown", event => {
-      const offset = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -10, ArrowDown: 10 }[event.key];
+      const offset = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -gridSize, ArrowDown: gridSize }[event.key];
       if (offset === undefined) return;
       event.preventDefault();
       const target = Math.max(0, Math.min(entries.length - 1, index + offset));
@@ -182,7 +194,7 @@ document.querySelector("#clear-filter").addEventListener("click", () => highligh
 function setLanguage(locale) {
   language = Object.hasOwn(translations, locale) ? locale : "pt-BR";
   document.documentElement.lang = language;
-  document.title = t("title");
+  document.title = `${t("title")} · ${gridSize}×${gridSize}`;
   document.querySelector('meta[name="description"]').content = t("description");
   document.querySelector("#language").value = language;
   for (const element of document.querySelectorAll("[data-i18n]")) {

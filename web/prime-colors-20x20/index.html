@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Explore os fatores primos dos números de 1 a 400 por meio das cores.">
+  <title>Cores dos primos · MathPlayground · 20×20</title>
+  <link rel="stylesheet" href="../prime-colors/styles.css">
+  <script src="../prime-colors/i18n.js" defer></script>
+  <script src="../prime-colors/app.js" defer></script>
+</head>
+<body data-grid-size="20">
+  <main>
+    <header class="hero">
+      <div class="top-bar">
+        <div class="brand"><span class="brand-mark" aria-hidden="true">✳</span> MathPlayground <span class="divider">/</span> <span data-i18n="brand">Explorando os números</span></div>
+        <label class="language-picker" for="language"><span data-i18n="language">Idioma</span>
+          <select id="language">
+            <option value="pt-BR" lang="pt-BR" selected>Português (Brasil)</option>
+            <option value="en" lang="en">English</option>
+            <option value="fr" lang="fr">Français</option>
+            <option value="ja" lang="ja">日本語</option>
+            <option value="ko" lang="ko">한국어</option>
+          </select>
+        </label>
+      </div>
+      <nav class="grid-versions" aria-labelledby="grid-version-label">
+        <span id="grid-version-label" data-i18n="gridSizeLabel">Tamanho da grade</span>
+        <a href="../prime-colors/index.html">10×10 · 1–100</a>
+        <a href="../prime-colors-20x20/index.html" aria-current="page">20×20 · 1–400</a>
+      </nav>
+      <p class="eyebrow" data-i18n="eyebrow">Um pouco de cor. Um pouco de teoria dos números.</p>
+      <h1><span data-i18n="heroStart">Todo número tem</span><br><em data-i18n="heroEm">uma paleta de primos.</em></h1>
+      <p class="intro" data-i18n="intro">Os primos são os blocos de construção. Dê uma cor a cada um e veja como os números de 1 a 400 se formam.</p>
+    </header>
+
+    <div class="workspace">
+      <section class="board" aria-labelledby="grid-title">
+        <div class="section-heading">
+          <h2 id="grid-title" data-i18n="gridTitle">O jardim dos números</h2>
+          <span class="range">01 — 400</span>
+        </div>
+        <p class="board-hint" data-i18n="gridHint">Escolha um primo para destacar seus múltiplos ou um composto para encontrar seus fatores primos.</p>
+        <p class="grid-scroll-hint" data-i18n="gridScrollHint">Em telas menores, deslize a grade para os lados para ver as 20 colunas.</p>
+        <div class="grid-scroll"><div id="number-grid" class="number-grid" aria-label="Números de 1 a 400"></div></div>
+        <div class="board-footer"><span><i class="prime-marker" aria-hidden="true"></i> <span data-i18n="primeDot">Um ponto indica um primo</span></span><span data-i18n="bandsHint">Uma faixa por fator primo</span></div>
+        <p id="filter-status" class="filter-status" role="status">Mostrando todos os 400 números</p>
+        <section class="prime-board" aria-labelledby="prime-grid-title">
+          <div class="section-heading">
+            <h2 id="prime-grid-title" data-i18n="primeGridTitle">Apenas os primos</h2>
+            <span class="count">78</span>
+          </div>
+          <p class="board-hint" data-i18n="primeGridHint">Clique em um primo para destacar seus múltiplos na grade acima. Clique novamente para desmarcar.</p>
+          <div class="grid-scroll"><div id="prime-grid" class="number-grid" aria-labelledby="prime-grid-title"></div></div>
+        </section>
+      </section>
+
+      <aside class="sidebar">
+        <section class="inspector" aria-labelledby="detail-heading">
+          <p class="eyebrow" id="detail-heading" data-i18n="detailHeading">Por trás das cores</p>
+          <div class="detail-top"><div id="selected-tile" class="selected-tile" aria-hidden="true"></div><span id="number-kind" class="kind"></span></div>
+          <div id="number-detail" aria-live="polite" aria-atomic="true">
+            <h2 id="equation"></h2>
+            <div id="factor-chips" class="factor-chips"></div>
+            <p id="explanation"></p>
+          </div>
+        </section>
+
+        <section class="legend" aria-labelledby="legend-heading">
+          <div class="section-heading"><h2 id="legend-heading" data-i18n="legendHeading">A paleta dos primos</h2><span class="count">78</span></div>
+          <p data-i18n="legendHint">Escolha um primo para encontrar seus múltiplos.</p>
+          <div id="prime-legend" class="prime-legend"></div>
+          <button id="clear-filter" class="clear-filter" type="button" disabled><span data-i18n="clear">Mostrar todos os números</span><span aria-hidden="true">↗</span></button>
+        </section>
+      </aside>
+    </div>
+
+    <footer class="page-footer"><span data-i18n="footer">Pequenos fatores. Infinitos padrões.</span><p><strong data-i18n="oneQuestion">E o número 1?</strong> <span data-i18n="oneFooter">Ele não é primo nem composto, por isso não tem cores de fatores primos.</span></p></footer>
+    <noscript>Esta grade interativa precisa do JavaScript ativado para mostrar os números e seus fatores primos.</noscript>
+  </main>
+</body>
+</html>

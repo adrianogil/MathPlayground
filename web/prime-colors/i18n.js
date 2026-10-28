@@ -1,17 +1,23 @@
 "use strict";
 
+// Both offline pages share behavior and translations, with a fixed grid size.
+const gridSize = document.body.dataset.gridSize === "20" ? 20 : 10;
+const maximum = gridSize * gridSize;
+
 const translations = {
   "pt-BR": {
+    gridSizeLabel: "Tamanho da grade",
+    gridScrollHint: "Em telas menores, deslize a grade para os lados para ver as 20 colunas.",
     title: "Cores dos primos · MathPlayground",
-    description: "Explore os fatores primos dos números de 1 a 100 por meio das cores.",
+    description: "Explore os fatores primos dos números de 1 a {max} por meio das cores.",
     language: "Idioma", brand: "Explorando os números",
     eyebrow: "Um pouco de cor. Um pouco de teoria dos números.",
     heroStart: "Todo número tem", heroEm: "uma paleta de primos.",
-    intro: "Os primos são os blocos de construção. Dê uma cor a cada um e veja como os números de 1 a 100 se formam.",
+    intro: "Os primos são os blocos de construção. Dê uma cor a cada um e veja como os números de 1 a {max} se formam.",
     gridTitle: "O jardim dos números",
     primeGridTitle: "Apenas os primos", primeGridHint: "Clique em um primo para destacar seus múltiplos na grade acima. Clique novamente para desmarcar.",
     gridHint: "Escolha um primo para destacar seus múltiplos ou um composto para encontrar seus fatores primos.",
-    gridLabel: "Números de 1 a 100", primeDot: "Um ponto indica um primo", bandsHint: "Uma faixa por fator primo",
+    gridLabel: "Números de 1 a {max}", primeDot: "Um ponto indica um primo", bandsHint: "Uma faixa por fator primo",
     detailHeading: "Por trás das cores", legendHeading: "A paleta dos primos", legendHint: "Escolha um primo para encontrar seus múltiplos.",
     clear: "Mostrar todos os números", footer: "Pequenos fatores. Infinitos padrões.",
     oneQuestion: "E o número 1?", oneFooter: "Ele não é primo nem composto, por isso não tem cores de fatores primos.",
@@ -27,17 +33,19 @@ const translations = {
     primeExplanation: "Apenas 1 e {value} dividem {value} exatamente. Ele recebe uma cor, que aparece em todos os seus múltiplos.",
     colorOne: "1 cor", colorMany: "{count} cores",
     compositeExplanation: "{count} fatores primos, {colors}. Cada faixa representa um fator; primos repetidos repetem a mesma cor. Multiplique os fatores para obter {value}.",
-    showAll: "Mostrando todos os 100 números", multiplesOne: "Destacando 1 múltiplo de {value}", multiplesMany: "Destacando {count} múltiplos de {value}",
+    showAll: "Mostrando todos os {max} números", multiplesOne: "Destacando 1 múltiplo de {value}", multiplesMany: "Destacando {count} múltiplos de {value}",
     factorsStatus: "Fatores primos de {value}: {factors} · o número selecionado continua visível", highlightPrime: "Destacar múltiplos de {value}"
   },
   en: {
-    title: "Prime colors · MathPlayground", description: "Explore the prime factors of every number from 1 to 100 through color.",
+    gridSizeLabel: "Grid size",
+    gridScrollHint: "On smaller screens, scroll the grid sideways to see all 20 columns.",
+    title: "Prime colors · MathPlayground", description: "Explore the prime factors of every number from 1 to {max} through color.",
     language: "Language", brand: "Number explorations", eyebrow: "A little color. A little number theory.",
     heroStart: "Every number has", heroEm: "a prime palette.",
-    intro: "Primes are the building blocks. Give each one a color, and watch the numbers from 1 to 100 come together.",
+    intro: "Primes are the building blocks. Give each one a color, and watch the numbers from 1 to {max} come together.",
     gridTitle: "The number garden", gridHint: "Pick a prime to highlight its multiples, or a composite to find its prime factors.",
     primeGridTitle: "Just the primes", primeGridHint: "Click a prime to highlight its multiples in the grid above. Click again to deselect it.",
-    gridLabel: "Numbers 1 to 100", primeDot: "A dot marks a prime", bandsHint: "One band per prime factor",
+    gridLabel: "Numbers 1 to {max}", primeDot: "A dot marks a prime", bandsHint: "One band per prime factor",
     detailHeading: "Under the colors", legendHeading: "The prime palette", legendHint: "Choose a prime to find its multiples.",
     clear: "Show all numbers", footer: "Small factors. Endless patterns.", oneQuestion: "What about 1?",
     oneFooter: "It’s neither prime nor composite, so it has no prime colors.",
@@ -52,17 +60,19 @@ const translations = {
     primeExplanation: "Only 1 and {value} divide {value} exactly. It gets one color, which appears in every multiple of {value}.",
     colorOne: "1 color", colorMany: "{count} colors",
     compositeExplanation: "{count} prime factors, {colors}. Each band is one factor; repeated primes repeat the same color. Multiply the factors to get {value}.",
-    showAll: "Showing all 100 numbers", multiplesOne: "Highlighting 1 multiple of {value}", multiplesMany: "Highlighting {count} multiples of {value}",
+    showAll: "Showing all {max} numbers", multiplesOne: "Highlighting 1 multiple of {value}", multiplesMany: "Highlighting {count} multiples of {value}",
     factorsStatus: "Prime factors of {value}: {factors} · the selected number stays visible", highlightPrime: "Highlight multiples of {value}"
   },
   fr: {
-    title: "Les couleurs des nombres premiers · MathPlayground", description: "Explorez les facteurs premiers des nombres de 1 à 100 grâce aux couleurs.",
+    gridSizeLabel: "Taille de la grille",
+    gridScrollHint: "Sur les petits écrans, faites défiler la grille horizontalement pour voir les 20 colonnes.",
+    title: "Les couleurs des nombres premiers · MathPlayground", description: "Explorez les facteurs premiers des nombres de 1 à {max} grâce aux couleurs.",
     language: "Langue", brand: "Exploration des nombres", eyebrow: "Un peu de couleur. Un peu de théorie des nombres.",
     heroStart: "Chaque nombre a", heroEm: "sa palette de premiers.",
-    intro: "Les nombres premiers sont les briques de base. Donnez une couleur à chacun et découvrez comment se forment les nombres de 1 à 100.",
+    intro: "Les nombres premiers sont les briques de base. Donnez une couleur à chacun et découvrez comment se forment les nombres de 1 à {max}.",
     gridTitle: "Le jardin des nombres", gridHint: "Choisissez un nombre premier pour mettre en évidence ses multiples, ou un nombre composé pour trouver ses facteurs premiers.",
     primeGridTitle: "Uniquement les nombres premiers", primeGridHint: "Cliquez sur un nombre premier pour mettre en évidence ses multiples dans la grille ci-dessus. Cliquez à nouveau pour le désélectionner.",
-    gridLabel: "Nombres de 1 à 100", primeDot: "Un point indique un nombre premier", bandsHint: "Une bande par facteur premier",
+    gridLabel: "Nombres de 1 à {max}", primeDot: "Un point indique un nombre premier", bandsHint: "Une bande par facteur premier",
     detailHeading: "Derrière les couleurs", legendHeading: "La palette des premiers", legendHint: "Choisissez un nombre premier pour trouver ses multiples.",
     clear: "Afficher tous les nombres", footer: "Petits facteurs. Motifs infinis.", oneQuestion: "Et le nombre 1 ?",
     oneFooter: "Il n’est ni premier ni composé : il n’a donc aucune couleur de facteur premier.",
@@ -77,17 +87,19 @@ const translations = {
     primeExplanation: "Seuls 1 et {value} divisent exactement {value}. Il reçoit une couleur, qui apparaît dans chacun de ses multiples.",
     colorOne: "1 couleur", colorMany: "{count} couleurs",
     compositeExplanation: "{count} facteurs premiers, {colors}. Chaque bande représente un facteur ; un facteur répété conserve la même couleur. Multipliez les facteurs pour obtenir {value}.",
-    showAll: "Les 100 nombres sont affichés", multiplesOne: "1 multiple de {value} mis en évidence", multiplesMany: "{count} multiples de {value} mis en évidence",
+    showAll: "Les {max} nombres sont affichés", multiplesOne: "1 multiple de {value} mis en évidence", multiplesMany: "{count} multiples de {value} mis en évidence",
     factorsStatus: "Facteurs premiers de {value} : {factors} · le nombre sélectionné reste visible", highlightPrime: "Mettre en évidence les multiples de {value}"
   },
   ja: {
-    title: "素数の色 · MathPlayground", description: "色を通して、1から100までの数の素因数を探ってみましょう。",
+    gridSizeLabel: "グリッドのサイズ",
+    gridScrollHint: "小さい画面では、表を横にスクロールすると20列すべてを見ることができます。",
+    title: "素数の色 · MathPlayground", description: "色を通して、1から{max}までの数の素因数を探ってみましょう。",
     language: "言語", brand: "数の探究", eyebrow: "色と一緒に、数の仕組みを探ろう。",
     heroStart: "すべての数に、", heroEm: "素数の彩り。",
-    intro: "素数は数を作る基本の材料です。それぞれに色をつけて、1から100までの数がどのようにできているか見てみましょう。",
+    intro: "素数は数を作る基本の材料です。それぞれに色をつけて、1から{max}までの数がどのようにできているか見てみましょう。",
     gridTitle: "数の庭", gridHint: "素数を選ぶとその倍数が、合成数を選ぶとその素因数が強調表示されます。",
     primeGridTitle: "素数だけの一覧", primeGridHint: "素数をクリックすると、上の表でその倍数が強調表示されます。もう一度クリックすると選択を解除できます。",
-    gridLabel: "1から100までの数", primeDot: "点は素数の目印", bandsHint: "帯1本が素因数1つを表します",
+    gridLabel: "1から{max}までの数", primeDot: "点は素数の目印", bandsHint: "帯1本が素因数1つを表します",
     detailHeading: "色の仕組み", legendHeading: "素数のパレット", legendHint: "素数を選んで、その倍数を見つけましょう。",
     clear: "すべての数を表示", footer: "小さな因数、無限のパターン。", oneQuestion: "1はどうなる？",
     oneFooter: "1は素数でも合成数でもなく、素因数を持たないので色はつきません。",
@@ -102,17 +114,19 @@ const translations = {
     primeExplanation: "{value}を割り切れる正の整数は、1と{value}だけです。この素数の色は、すべての倍数に現れます。",
     colorOne: "1色", colorMany: "{count}色",
     compositeExplanation: "素因数は重複を含めて{count}個、色は{colors}です。帯1本が素因数1つを表し、同じ素因数は同じ色になります。すべての素因数を掛けると{value}になります。",
-    showAll: "100個すべての数を表示しています", multiplesOne: "{value}の倍数1個を強調表示", multiplesMany: "{value}の倍数{count}個を強調表示",
+    showAll: "{max}個すべての数を表示しています", multiplesOne: "{value}の倍数1個を強調表示", multiplesMany: "{value}の倍数{count}個を強調表示",
     factorsStatus: "{value}の素因数：{factors} · 選択した数も表示したままにします", highlightPrime: "{value}の倍数を強調表示"
   },
   ko: {
-    title: "소수의 색 · MathPlayground", description: "색으로 1부터 100까지 수의 소인수를 살펴보세요.",
+    gridSizeLabel: "격자 크기",
+    gridScrollHint: "작은 화면에서는 격자를 좌우로 스크롤하면 20개 열을 모두 볼 수 있습니다.",
+    title: "소수의 색 · MathPlayground", description: "색으로 1부터 {max}까지 수의 소인수를 살펴보세요.",
     language: "언어", brand: "수 탐구", eyebrow: "색과 함께 알아보는 수의 원리.",
     heroStart: "모든 수를 이루는", heroEm: "소수의 색.",
-    intro: "소수는 수를 만드는 기본 재료입니다. 각 소수에 색을 입히고 1부터 100까지의 수가 어떻게 만들어지는지 살펴보세요.",
+    intro: "소수는 수를 만드는 기본 재료입니다. 각 소수에 색을 입히고 1부터 {max}까지의 수가 어떻게 만들어지는지 살펴보세요.",
     gridTitle: "수의 정원", gridHint: "소수를 선택하면 그 배수가, 합성수를 선택하면 그 소인수가 강조됩니다.",
     primeGridTitle: "소수만 모아 보기", primeGridHint: "소수를 클릭하면 위의 표에서 그 배수가 강조됩니다. 다시 클릭하면 선택이 해제됩니다.",
-    gridLabel: "1부터 100까지의 수", primeDot: "점은 소수를 나타냅니다", bandsHint: "띠 하나가 소인수 하나를 나타냅니다",
+    gridLabel: "1부터 {max}까지의 수", primeDot: "점은 소수를 나타냅니다", bandsHint: "띠 하나가 소인수 하나를 나타냅니다",
     detailHeading: "색에 담긴 원리", legendHeading: "소수 팔레트", legendHint: "소수를 선택해 그 배수를 찾아보세요.",
     clear: "모든 수 보기", footer: "작은 인수, 끝없는 패턴.", oneQuestion: "1은 어떨까요?",
     oneFooter: "1은 소수도 합성수도 아니며 소인수가 없으므로 색이 없습니다.",
@@ -127,12 +141,13 @@ const translations = {
     primeExplanation: "{value}의 양의 약수는 1과 {value}뿐입니다. 이 소수에 지정된 색은 모든 배수에 나타납니다.",
     colorOne: "1가지 색", colorMany: "{count}가지 색",
     compositeExplanation: "중복을 포함한 소인수 {count}개, {colors}입니다. 띠 하나가 소인수 하나를 나타내며 같은 소인수는 같은 색으로 반복됩니다. 소인수를 모두 곱한 결과는 {value}입니다.",
-    showAll: "100개의 수를 모두 표시합니다", multiplesOne: "{value}의 배수 1개 강조", multiplesMany: "{value}의 배수 {count}개 강조",
+    showAll: "{max}개의 수를 모두 표시합니다", multiplesOne: "{value}의 배수 1개 강조", multiplesMany: "{value}의 배수 {count}개 강조",
     factorsStatus: "{value}의 소인수: {factors} · 선택한 수도 계속 표시됩니다", highlightPrime: "{value}의 배수 강조"
   }
 };
 
 let language = "pt-BR";
 function t(key, values = {}) {
-  return translations[language][key].replace(/\{(\w+)\}/g, (_, name) => values[name]);
+  const parameters = { max: maximum, ...values };
+  return translations[language][key].replace(/\{(\w+)\}/g, (_, name) => parameters[name]);
 }

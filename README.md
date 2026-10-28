@@ -147,6 +147,19 @@ factors and deselecting a prime from either grid.
 Every grid selection shows its factorization. Arrow keys move through the ten-column grid; Enter or
 Space selects the focused number. No dependencies or build step are required.
 
+### 20×20 edition
+
+Open `web/prime-colors-20x20/index.html` for a separate grid of 1–400, with all
+78 primes in the grid below it. Both pages share the scripts, translations, and
+stylesheet in `web/prime-colors/`, and link to each other at the top. They work
+offline without a build step. The existing primes keep the same colors; the
+extended palette assigns a unique color to each additional prime through 400.
+
+The 20×20 edition keeps the same selection, deselection, factor highlighting,
+and language controls. Selecting 1 highlights all 78 primes. Up/down arrow keys
+move by 20 cells. On narrow screens, the grids scroll horizontally to preserve
+20 columns and readable numbers.
+
 ## Interactive Trachtenberg walkthrough
 
 Open `web/trachtenberg-gifted/index.html` directly, or serve the repository and
